@@ -33,7 +33,7 @@ def login():
 
         if usuario and usuario.check_password(password):
             login_user(usuario)
-            return redirect("/admin")
+            return redirect(url_for("inicio.inicio"))
 
     return render_template("login.html")
 

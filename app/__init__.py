@@ -17,9 +17,11 @@ def create_app():
     # importar blueprints
     from .auth import auth_bp
     from .admin import admin_bp
+    from .inicio import inicio_bp
 
     # registrar blueprints
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(inicio_bp)
 
     return app
