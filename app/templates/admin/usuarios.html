@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Usuarios</title>
+</head>
+<body>
+
+<h1>Lista de Usuarios</h1>
+
+<a href="/admin/usuarios/crear">Crear nuevo usuario</a>
+<br><br>
+
+<table border="1">
+
+<tr>
+    <th>ID</th>
+    <th>Usuario</th>
+    <th>Rol</th>
+    <th>Acciones</th>
+</tr>
+
+{% for usuario in usuarios %}
+
+<tr>
+
+<td>{{ usuario.id }}</td>
+<td>{{ usuario.username }}</td>
+<td>{{ usuario.role }}</td>
+
+<td>
+
+<a href="/admin/usuarios/editar/{{usuario.id}}">Editar</a>
+
+|
+
+<a href="/admin/usuarios/eliminar/{{usuario.id}}" 
+onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
+Eliminar
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="/admin">Volver al panel</a>
+
+</body>
+</html>

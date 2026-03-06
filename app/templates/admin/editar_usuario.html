@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Usuario</title>
+</head>
+<body>
+
+<h1>Editar Usuario</h1>
+
+<form method="POST">
+
+<label>Usuario</label>
+<br>
+<input type="text" name="username" value="{{usuario.username}}" required>
+
+<br><br>
+
+<label>Rol</label>
+<br>
+<select name="role">
+
+<option value="admin" {% if usuario.role == "admin" %}selected{% endif %}>Admin</option>
+<option value="usuario" {% if usuario.role == "usuario" %}selected{% endif %}>Usuario</option>
+
+</select>
+
+<br><br>
+
+<button type="submit">Actualizar</button>
+
+</form>
+
+<br>
+
+<a href="/admin/usuarios">Volver</a>
+
+</body>
+</html>
