@@ -1,3 +1,34 @@
+# =========================================================
+# IMPORTANTE PARA TODO EL GRUPO: SEGURIDAD DE RUTAS
+# =========================================================
+# 1. IMPORTACIÓN:
+#    Para usar los decoradores de seguridad, asegúrate de 
+#    incluir esta línea al inicio de tu archivo:
+#    from .decorators import admin_required, referrer_required
+#
+# 2. USO DE DECORADORES:
+#    - @login_required: Verifica que el usuario esté logueado.
+#    - @admin_required: Verifica que el usuario tenga rol "admin".
+#    - @referrer_required: Bloquea el acceso manual desde la URL 
+#      (exige que el usuario venga de un clic interno, ej. Login).
+#
+# 3. EJEMPLO DE IMPLEMENTACIÓN EN CRUDs:
+#
+#    @admin_bp.route("/usuarios")
+#    @login_required
+#    @admin_required
+#    @referrer_required
+#    def gestion_usuarios():
+#        ...
+#
+# NOTA: Todos los módulos administrativos (Productos, Categorías, 
+# Configuración, etc.) deben implementar los tres decoradores 
+# en ese orden para garantizar la máxima seguridad.
+# =========================================================
+
+from .decorators import admin_required, referrer_required
+
+
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required
 from .models import User
@@ -11,6 +42,9 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 @admin_bp.route("/")
 @login_required
+@admin_required
+@referrer_required
+
 def dashboard():
     return render_template("admin/dashboard.html")
 
@@ -21,6 +55,9 @@ def dashboard():
 
 @admin_bp.route("/usuarios")
 @login_required
+@admin_required
+@referrer_required
+
 def usuarios():
 
     usuarios = User.query.all()
@@ -34,6 +71,9 @@ def usuarios():
 
 @admin_bp.route("/usuarios/crear", methods=["GET", "POST"])
 @login_required
+@admin_required
+@referrer_required
+
 def crear_usuario():
 
     if request.method == "POST":
@@ -59,6 +99,9 @@ def crear_usuario():
 
 @admin_bp.route("/usuarios/editar/<int:id>", methods=["GET", "POST"])
 @login_required
+@admin_required
+@referrer_required
+
 def editar_usuario(id):
 
     usuario = User.query.get_or_404(id)
@@ -81,6 +124,9 @@ def editar_usuario(id):
 
 @admin_bp.route("/usuarios/eliminar/<int:id>")
 @login_required
+@admin_required
+@referrer_required
+
 def eliminar_usuario(id):
 
     usuario = User.query.get_or_404(id)
