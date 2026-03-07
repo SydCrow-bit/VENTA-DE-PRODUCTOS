@@ -17,10 +17,14 @@ def admin_required(func):
 def referrer_required(view_func):
     @wraps(view_func)
     def wrapper(*args, **kwargs):
-        # Si el usuario entra directamente, referrer es None
-        # O si no viene de una ruta permitida (aquí configuramos 'login')
-        if not request.referrer or "login" not in request.referrer:
-            # Puedes redirigir al login o lanzar un error 403
+        referrer = request.referrer
+        # Obtenemos el host actual (ej: 127.0.0.1:5000)
+        host = request.host 
+
+        # EXPLICACIÓN DE LA LÓGICA:
+        # 1. Si no hay referrer (escribió la URL a mano) -> Bloquear
+        # 2. Si el host de nuestro sitio NO está en el referrer -> Bloquear
+        if not referrer or host not in referrer:
             return redirect(url_for('auth.login'))
             
         return view_func(*args, **kwargs)

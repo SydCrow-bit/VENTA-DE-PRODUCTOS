@@ -21,15 +21,20 @@
 #    def gestion_usuarios():
 #        ...
 #
-# NOTA: Todos los módulos administrativos (Productos, Categorías, 
-# Configuración, etc.) deben implementar los tres decoradores 
-# en ese orden para garantizar la máxima seguridad.
+# =========================================================
+# NOTA IMPORTANTE:
+# @referrer_required permite la navegación interna. Una vez
+# que el usuario entra legalmente desde el Login, puede 
+# moverse por todos los menús. Solo se bloquea si intenta
+# pegar la URL directamente en una pestaña nueva.
+# =========================================================
+
 # =========================================================
 
 from .decorators import admin_required, referrer_required
 
 
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required
 from .models import User
 from .extensions import db
@@ -46,7 +51,7 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 @referrer_required
 
 def dashboard():
-    return render_template("admin/dashboard.html")
+    return render_template("admin.usuarios")
 
 
 # =========================
@@ -87,6 +92,7 @@ def crear_usuario():
 
         db.session.add(usuario)
         db.session.commit()
+        flash("Nuevo usuario creado con éxito", "success")
 
         return redirect(url_for("admin.usuarios"))
 
@@ -105,6 +111,7 @@ def crear_usuario():
 def editar_usuario(id):
 
     usuario = User.query.get_or_404(id)
+    nombre = usuario.username
 
     if request.method == "POST":
 
@@ -112,6 +119,8 @@ def editar_usuario(id):
         usuario.role = request.form.get("role")
 
         db.session.commit()
+        
+        flash(f"Usuario '{nombre}' editado correctamente", "success")
 
         return redirect(url_for("admin.usuarios"))
 
@@ -130,8 +139,11 @@ def editar_usuario(id):
 def eliminar_usuario(id):
 
     usuario = User.query.get_or_404(id)
+    nombre = usuario.username
 
     db.session.delete(usuario)
     db.session.commit()
+    
+    flash(f"Usuario '{nombre}' eliminado correctamente", "success")
 
     return redirect(url_for("admin.usuarios"))

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Venta Electrónicos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Venta Electrónicos</h3>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="{{ url_for('inicio.inicio') }}"><i class="fas fa-home"></i> Inicio</a></li>
+                    
+                    {% if current_user.role == "admin" %}
+                        <li class="menu-label">Gestión Admin</li>
+                        <li><a href="{{ url_for('admin.usuarios') }}"><i class="fas fa-users"></i> Usuarios</a></li>
+
+                    {% endif %}
+
+                    <li class="menu-label">Operaciones</li>
+                    <li><a href="#"><i class="fas fa-laptop"></i> Productos</a></li>
+                    <li><a href="#"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
+                    <li><a href="#"><i class="fas fa-tags"></i> Categorías</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="user-info">
+                    <span>Bienvenido, <strong>{{ current_user.username }}</strong></span>
+                    <span class="badge">{{ current_user.role }}</span>
+                </div>
+            </header>
+
+            <section class="content-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                <i class="fas fa-info-circle"></i> {{ message }}
+                                <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% block content %}{% endblock %}
+            </section>
+        </main>
+    </div>
+
+</body>
+</html>

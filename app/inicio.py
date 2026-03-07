@@ -6,7 +6,6 @@ inicio_bp = Blueprint("inicio", __name__)
 
 @inicio_bp.route("/inicio")
 @login_required
-@admin_required
 @referrer_required
 def inicio():
     rol = current_user.role

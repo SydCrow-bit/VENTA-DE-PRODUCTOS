@@ -1,38 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Editar Usuario</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h1>Editar Usuario</h1>
+{% block title %}Editar Usuario - {{ usuario.username }}{% endblock %}
 
-<form method="POST">
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-user-edit" style="color: #f59e0b;"></i>
+            <h1>Editar Usuario</h1>
+            <p>Modificando la cuenta de: <strong>{{ usuario.username }}</strong></p>
+        </div>
 
-<label>Usuario</label>
-<br>
-<input type="text" name="username" value="{{usuario.username}}" required>
+        <form method="POST" class="styled-form">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Nombre de Usuario</label>
+                <input type="text" id="username" name="username" value="{{ usuario.username }}" required>
+            </div>
 
-<br><br>
+            <div class="form-group">
+                <label for="role"><i class="fas fa-user-tag"></i> Cambiar Rol</label>
+                <select id="role" name="role">
+                    <option value="usuario" {{ 'selected' if usuario.role == 'usuario' else '' }}>
+                        Usuario Estándar
+                    </option>
+                    <option value="admin" {{ 'selected' if usuario.role == 'admin' else '' }}>
+                        Administrador
+                    </option>
+                </select>
+            </div>
 
-<label>Rol</label>
-<br>
-<select name="role">
-
-<option value="admin" {% if usuario.role == "admin" %}selected{% endif %}>Admin</option>
-<option value="usuario" {% if usuario.role == "usuario" %}selected{% endif %}>Usuario</option>
-
-</select>
-
-<br><br>
-
-<button type="submit">Actualizar</button>
-
-</form>
-
-<br>
-
-<a href="/admin/usuarios">Volver</a>
-
-</body>
-</html>
+            <div class="form-actions">
+                <button type="submit" class="btn-save" style="background-color: #f59e0b;">
+                    <i class="fas fa-sync-alt"></i> Actualizar Datos
+                </button>
+                <a href="{{ url_for('admin.usuarios') }}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Volver al listado
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

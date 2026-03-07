@@ -1,34 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Inicio</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h1>Panel Principal</h1>
+{% block title %}Inicio - Panel Principal{% endblock %}
 
-<p>Bienvenido {{ current_user.username }}</p>
-
-<hr>
-
-<ul>
-
-{% if current_user.role == "admin" %}
-    <li><a href="/admin">Administración</a></li>
-    <li><a href="#">Ventas</a></li>
-    <li><a href="#">Productos</a></li>
-    <li><a href="#">Categorías</a></li>
-
-{% elif current_user.role == "usuario" %}
-    <li><a href="#">Ventas</a></li>
-    <li><a href="#">Productos</a></li>
-{% endif %}
-
-</ul>
-
-<br>
-
-<a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
-
-</body>
-</html>
+{% block content %}
+    <h1>Panel Principal</h1>
+    <p>Bienvenido al sistema de gestión de ventas.</p>
+    
+    <div class="cards-grid">
+        <div class="card">
+            <h3>Ventas</h3>
+            <p>Registrar una nueva venta</p>
+            <a href="#" class="btn-card">Ir a Ventas</a>
+        </div>
+        <div class="card">
+            <h3>Productos</h3>
+            <p>Ver inventario disponible</p>
+            <a href="#" class="btn-card">Ver Catálogo</a>
+        </div>
+    </div>
+{% endblock %}
