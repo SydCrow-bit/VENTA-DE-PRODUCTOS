@@ -26,7 +26,7 @@
                     {% endif %}
 
                     <li class="menu-label">Operaciones</li>
-                    <li><a href="#"><i class="fas fa-laptop"></i> Productos</a></li>
+                    <li><a href="{{ url_for('productos.index') }}"><i class="fas fa-laptop"></i> Productos</a></li>
                     <li><a href="#"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
                     <li><a href="{{ url_for('categorias.index') }}"><i class="fas fa-tags"></i> Categorías</a></li>
                 </ul>

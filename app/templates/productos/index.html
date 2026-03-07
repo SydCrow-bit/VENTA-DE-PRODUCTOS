@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Productos{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <div>
+        <h1 style="margin: 0;">Lista de Productos</h1>
+    </div>
+    
+    <a href="{{ url_for('productos.create') }}" style="background: #3b82f6; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-plus"></i> Nuevo Producto
+    </a>
+</div>
+
+<div style="margin-bottom: 20px;">
+    <input type="text" id="buscador" placeholder="Buscar producto..." style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box;">
+</div>
+
+<div class="table-responsive">
+    <table class="custom-table" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="border-bottom: 2px solid #f1f5f9;">
+                <th style="text-align: left; padding: 12px; color: #64748b;">ID</th>
+                <th style="text-align: left; padding: 12px; color: #64748b;">Nombre</th>
+                <th style="text-align: left; padding: 12px; color: #64748b;">Categoría</th>
+                <th style="text-align: left; padding: 12px; color: #64748b;">Precio</th>
+                <th style="text-align: left; padding: 12px; color: #64748b;">Stock</th>
+                <th style="text-align: center; padding: 12px; color: #64748b;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla-productos">
+            {% for producto in productos %}
+            <tr style="border-bottom: 1px solid #f1f5f9;" class="fila-producto">
+                <td style="padding: 12px;">{{ producto.id }}</td>
+                <td style="padding: 12px;"><strong>{{ producto.nombre }}</strong></td>
+                <td style="padding: 12px;">
+                    <span class="badge" style="background-color: #e2e8f0; color: #475569;">
+                        {{ producto.categoria.nombre }}
+                    </span>
+                </td>
+                <td style="padding: 12px;">Bs {{ producto.precio }}</td>
+                <td style="padding: 12px;">{{ producto.stock }}</td>
+                <td style="padding: 12px; text-align: center;">
+                    <div style="display: flex; justify-content: center; gap: 20px;">
+                        <a href="{{ url_for('productos.edit', id=producto.id) }}" style="text-decoration: none;">
+                            <i class="fas fa-pen" style="color: #3b82f6;"></i>
+                        </a>
+                        
+                        <a href="{{ url_for('productos.destroy', id=producto.id) }}" 
+                           style="text-decoration: none;"
+                           onclick="return confirm('¿Eliminar el producto {{ producto.nombre }}?')">
+                            <i class="fas fa-trash" style="color: #ef4444;"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById("buscador").addEventListener("keyup", function() {
+        let filtro = this.value.toLowerCase();
+        let filas = document.querySelectorAll(".fila-producto");
+
+        filas.forEach(function(fila) {
+            let texto = fila.innerText.toLowerCase();
+            if (texto.includes(filtro)) {
+                fila.style.display = "";
+            } else {
+                fila.style.display = "none";
+            }
+        });
+    });
+</script>
+{% endblock %}

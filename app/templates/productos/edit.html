@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Producto{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-edit" style="color: #f59e0b;"></i>
+            <h1>Editar Producto</h1>
+        </div>
+
+        <form method="POST" class="styled-form">
+            <div class="form-group">
+                <label for="nombre">Nombre del Producto</label>
+                <input type="text" id="nombre" name="nombre" value="{{ producto.nombre }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria_id">Categoría</label>
+                <select id="categoria_id" name="categoria_id" required>
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}" {% if categoria.id == producto.categoria_id %}selected{% endif %}>
+                            {{ categoria.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="precio">Precio</label>
+                    <input type="number" id="precio" name="precio" step="0.01" min="0" value="{{ producto.precio }}" required>
+                </div>
+
+                <div class="form-group" style="flex: 1;">
+                    <label for="stock">Stock</label>
+                    <input type="number" id="stock" name="stock" min="0" value="{{ producto.stock }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <input type="text" id="descripcion" name="descripcion" value="{{ producto.descripcion }}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save" style="background-color: #f59e0b;">
+                    Actualizar Datos
+                </button>
+                <a href="{{ url_for('productos.index') }}" class="btn-cancel">
+                    Volver al index
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

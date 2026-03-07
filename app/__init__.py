@@ -21,11 +21,13 @@ def create_app():
     from .admin import admin_bp
     from .inicio import inicio_bp
     from .categorias import categorias_bp
+    from .productos import productos_bp
 
     # registrar blueprints
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(inicio_bp)
     app.register_blueprint(categorias_bp)
+    app.register_blueprint(productos_bp)
 
     return app
