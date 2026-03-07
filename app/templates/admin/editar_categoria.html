@@ -2,34 +2,20 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-warning text-dark">
-                    <h3 class="card-title mb-0">Editar Categoría</h3>
-                </div>
-                <div class="card-body">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }}">{{ message }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
+    <h2>Editar Categoría</h2>
 
-                    <form action="{{ url_for('editar_categoria', id=categoria.id) }}" method="POST">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre de la Categoría</label>
-                            <input type="text" name="nombre" id="nombre" class="form-control" value="{{ categoria.nombre }}" required>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-warning">Actualizar Cambios</button>
-                            <a href="{{ url_for('lista_categorias') }}" class="btn btn-secondary">Volver al listado</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    {# El action ahora lleva 'routes.' #}
+    <form action="{{ url_for('routes.editar_categoria', id=categoria.id) }}" method="POST">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre de la Categoría</label>
+            <input type="text" name="nombre" id="nombre" class="form-control" value="{{ categoria.nombre }}" required>
         </div>
-    </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+            {# El enlace de cancelar también lleva 'routes.' #}
+            <a href="{{ url_for('routes.lista_categorias') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
 </div>
 {% endblock %}
