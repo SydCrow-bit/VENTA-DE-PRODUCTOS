@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="container mt-4">
@@ -17,7 +17,7 @@
                         {% endif %}
                     {% endwith %}
 
-                    <form action="{{ url_for('crear_producto') }}" method="POST">
+                    <form action="{{ url_for('routes.crear_producto') }}" method="POST">
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre del Producto</label>
                             <input type="text" name="nombre" class="form-control" placeholder="Ej. Laptop Asus Zenbook" required>
@@ -52,7 +52,7 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Guardar Producto</button>
-                            <a href="{{ url_for('lista_productos') }}" class="btn btn-secondary">Cancelar</a>
+                            <a href="{{ url_for('routes.lista_productos') }}" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </form>
                 </div>

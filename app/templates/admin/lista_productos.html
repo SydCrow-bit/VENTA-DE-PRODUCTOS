@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 {% block content %}
 <div class="container mt-4">
     <h2>Gestión de Productos</h2>
@@ -14,12 +14,12 @@
         {% endif %}
     {% endwith %}
 
-    <form method="GET" action="{{ url_for('lista_productos') }}" class="mb-3 d-flex gap-2">
+    <form method="GET" action="{{ url_for('routes.lista_productos') }}" class="mb-3 d-flex gap-2">
         <input type="text" name="search" class="form-control" value="{{ busqueda }}" placeholder="Buscar producto por nombre...">
         <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
 
-    <a href="{{ url_for('crear_producto') }}" class="btn btn-success mb-3">Nuevo Producto</a>
+    <a href="{{ url_for('routes.crear_producto') }}" class="btn btn-success mb-3">Nuevo Producto</a>
 
     <table class="table table-striped shadow-sm">
         <thead class="table-dark">
@@ -39,11 +39,11 @@
                 <td>{{ prod.precio }} Bs.</td>
                 <td>{{ prod.stock }}</td>
                 <td>
-                    <a href="{{ url_for('editar_producto', id=prod.id) }}" class="btn btn-sm btn-warning">
+                    <a href="{{ url_for(''routes.editar_producto', id=prod.id) }}" class="btn btn-sm btn-warning">
                         <i class="bi bi-pencil"></i> Editar
                     </a>
 
-                    <form action="{{ url_for('eliminar_producto', id=prod.id) }}" method="POST" style="display:inline;">
+                    <form action="{{ url_for(''routes.eliminar_producto', id=prod.id) }}" method="POST" style="display:inline;">
                         <button class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar el producto: {{ prod.nombre }}?')">
                             <i class="bi bi-trash"></i> Eliminar
                         </button>

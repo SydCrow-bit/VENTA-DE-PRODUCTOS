@@ -1,14 +1,14 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 {% block content %}
 <div class="container">
     <h2>Gestión de Categorías</h2>
     
-    <form method="GET" action="{{ url_for('lista_categorias') }}" class="mb-3">
+    <form method="GET" action="{{ url_for('routes.lista_categorias') }}" class="mb-3">
         <input type="text" name="search" value="{{ busqueda }}" placeholder="Buscar categoría...">
         <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
 
-    <a href="{{ url_for('crear_categoria') }}" class="btn btn-success mb-3">Nueva Categoría</a>
+    <a href="{{ url_for('routes.crear_categoria') }}" class="btn btn-success mb-3">Nueva Categoría</a>
 
     <table class="table">
         <thead>
@@ -24,8 +24,8 @@
                 <td>{{ cat.id }}</td>
                 <td>{{ cat.nombre }}</td>
                 <td>
-                    <a href="{{ url_for('editar_categoria', id=cat.id) }}" class="btn btn-sm btn-warning">Editar</a>
-                    <form action="{{ url_for('eliminar_categoria', id=cat.id) }}" method="POST" style="display:inline;">
+                    <a href="{{ url_for('routes.editar_categoria', id=cat.id) }}" class="btn btn-sm btn-warning">Editar</a>
+                    <form action="{{ url_for('routes.eliminar_categoria', id=cat.id) }}" method="POST" style="display:inline;">
                         <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</button>
                     </form>
                 </td>

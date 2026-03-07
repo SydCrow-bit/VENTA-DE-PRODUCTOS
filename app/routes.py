@@ -1,23 +1,23 @@
-from .extensions import login_manager
-from .models import User
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import login_required, current_user
+from .extensions import db, login_manager
+from .models import User, Category, Product
+
+# Definimos el Blueprint para este archivo
+routes_bp = Blueprint('routes', __name__)
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-# CODIGO AGREGADO 
-
-from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
 
 # --- CRUD DE CATEGORÍAS ---
 
-@app.route('/admin/categorias')
+@routes_bp.route('/admin/categorias')
 @login_required
 def lista_categorias():
-    if current_user.role != 'admin': # Validación de rol obligatoria
+    if current_user.role != 'admin':
         return "Acceso denegado", 403
     
-    # Leer con filtro/búsqueda (Requisito del examen)
     busqueda = request.args.get('search', '')
     if busqueda:
         categorias = Category.query.filter(Category.nombre.contains(busqueda)).all()
@@ -26,7 +26,7 @@ def lista_categorias():
     
     return render_template('admin/lista_categorias.html', categorias=categorias, busqueda=busqueda)
 
-@app.route('/admin/categorias/crear', methods=['GET', 'POST'])
+@routes_bp.route('/admin/categorias/crear', methods=['GET', 'POST'])
 @login_required
 def crear_categoria():
     if current_user.role != 'admin':
@@ -34,21 +34,18 @@ def crear_categoria():
 
     if request.method == 'POST':
         nombre = request.form.get('nombre')
-        # Validación simple (Requisito del examen)
         if not nombre:
-            flash('El nombre es obligatorio')
+            flash('El nombre es obligatorio', 'danger')
         else:
             nueva_cat = Category(nombre=nombre)
             db.session.add(nueva_cat)
             db.session.commit()
-            return redirect(url_for('lista_categorias'))
+            flash('Categoría creada con éxito', 'success')
+            return redirect(url_for('routes.lista_categorias'))
             
     return render_template('admin/crear_categoria.html')
 
-        # EDITAR Y ELIMINAR (SOLO ADMIN)
-# --- CONTINUACIÓN CRUD DE CATEGORÍAS ---
-
-@app.route('/admin/categorias/editar/<int:id>', methods=['GET', 'POST'])
+@routes_bp.route('/admin/categorias/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar_categoria(id):
     if current_user.role != 'admin':
@@ -58,18 +55,17 @@ def editar_categoria(id):
     
     if request.method == 'POST':
         nombre = request.form.get('nombre')
-        # Validación de campo obligatorio
         if not nombre:
             flash('El nombre de la categoría no puede estar vacío.', 'danger')
         else:
             categoria.nombre = nombre
             db.session.commit()
             flash('Categoría actualizada correctamente.', 'success')
-            return redirect(url_for('lista_categorias'))
+            return redirect(url_for('routes.lista_categorias'))
             
     return render_template('admin/editar_categoria.html', categoria=categoria)
 
-@app.route('/admin/categorias/eliminar/<int:id>', methods=['POST'])
+@routes_bp.route('/admin/categorias/eliminar/<int:id>', methods=['POST'])
 @login_required
 def eliminar_categoria(id):
     if current_user.role != 'admin':
@@ -80,22 +76,20 @@ def eliminar_categoria(id):
         db.session.delete(categoria)
         db.session.commit()
         flash('Categoría eliminada con éxito.', 'success')
-    except:
-        # Validación: Evita eliminar si tiene productos asociados (integridad referencial)
-        flash('No se puede eliminar la categoría porque tiene productos vinculados.', 'danger')
+    except Exception:
+        db.session.rollback()
+        flash('No se puede eliminar: tiene productos vinculados.', 'danger')
         
-    return redirect(url_for('lista_categorias'))
+    return redirect(url_for('routes.lista_categorias'))
 
-# AÑADIENDO CODIGO #2
 # --- CRUD DE PRODUCTOS ---
 
-@app.route('/admin/productos')
+@routes_bp.route('/admin/productos')
 @login_required
 def lista_productos():
     if current_user.role != 'admin':
         return "Acceso denegado", 403
     
-    # Leer con filtro de búsqueda por nombre
     busqueda = request.args.get('search', '')
     if busqueda:
         productos = Product.query.filter(Product.nombre.contains(busqueda)).all()
@@ -104,13 +98,12 @@ def lista_productos():
     
     return render_template('admin/lista_productos.html', productos=productos, busqueda=busqueda)
 
-@app.route('/admin/productos/crear', methods=['GET', 'POST'])
+@routes_bp.route('/admin/productos/crear', methods=['GET', 'POST'])
 @login_required
 def crear_producto():
     if current_user.role != 'admin':
         return "Acceso denegado", 403
 
-    # Necesitamos las categorías para el desplegable del formulario
     categorias = Category.query.all()
 
     if request.method == 'POST':
@@ -119,51 +112,54 @@ def crear_producto():
         stock = request.form.get('stock')
         category_id = request.form.get('category_id')
 
-        # Validaciones obligatorias
         if not nombre or not precio or not category_id:
             flash('Nombre, Precio y Categoría son obligatorios', 'danger')
         else:
-            nuevo_prod = Product(
-                nombre=nombre, 
-                precio=float(precio), 
-                stock=int(stock), 
-                category_id=int(category_id)
-            )
-            db.session.add(nuevo_prod)
-            db.session.commit()
-            flash('Producto creado con éxito', 'success')
-            return redirect(url_for('lista_productos'))
+            try:
+                nuevo_prod = Product(
+                    nombre=nombre, 
+                    precio=float(precio), 
+                    stock=int(stock), 
+                    category_id=int(category_id)
+                )
+                db.session.add(nuevo_prod)
+                db.session.commit()
+                flash('Producto creado con éxito', 'success')
+                return redirect(url_for('routes.lista_productos'))
+            except ValueError:
+                flash('Precio o Stock inválidos', 'danger')
             
     return render_template('admin/crear_producto.html', categorias=categorias)
 
-# AÑADIENDO 3er CODIGO EDITAR Y ELIMINAR - PRODUCTO
-@app.route('/admin/productos/editar/<int:id>', methods=['GET', 'POST'])
+@routes_bp.route('/admin/productos/editar/<int:id>', methods=['GET', 'POST'])
 @login_required
 def editar_producto(id):
     if current_user.role != 'admin':
         return "Acceso denegado", 403
     
     producto = Product.query.get_or_404(id)
-    categorias = Category.query.all() # Necesarias para el desplegable
+    categorias = Category.query.all()
     
     if request.method == 'POST':
-        producto.nombre = request.form.get('nombre')
-        producto.precio = float(request.form.get('precio'))
-        producto.stock = int(request.form.get('stock'))
-        producto.category_id = int(request.form.get('category_id'))
-        producto.descripcion = request.form.get('descripcion')
+        try:
+            producto.nombre = request.form.get('nombre')
+            producto.precio = float(request.form.get('precio'))
+            producto.stock = int(request.form.get('stock'))
+            producto.category_id = int(request.form.get('category_id'))
+            producto.descripcion = request.form.get('descripcion')
 
-        # Validación de campos obligatorios
-        if not producto.nombre or not producto.precio:
-            flash('Nombre y Precio son obligatorios', 'danger')
-        else:
-            db.session.commit()
-            flash('Producto actualizado correctamente', 'success')
-            return redirect(url_for('lista_productos'))
+            if not producto.nombre:
+                flash('El nombre es obligatorio', 'danger')
+            else:
+                db.session.commit()
+                flash('Producto actualizado correctamente', 'success')
+                return redirect(url_for('routes.lista_productos'))
+        except ValueError:
+            flash('Verifica que el precio y stock sean números válidos', 'danger')
             
     return render_template('admin/editar_producto.html', producto=producto, categorias=categorias)
 
-@app.route('/admin/productos/eliminar/<int:id>', methods=['POST'])
+@routes_bp.route('/admin/productos/eliminar/<int:id>', methods=['POST'])
 @login_required
 def eliminar_producto(id):
     if current_user.role != 'admin':
@@ -173,4 +169,4 @@ def eliminar_producto(id):
     db.session.delete(producto)
     db.session.commit()
     flash('Producto eliminado', 'success')
-    return redirect(url_for('lista_productos'))
+    return redirect(url_for('routes.lista_productos'))

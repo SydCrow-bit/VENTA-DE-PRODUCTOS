@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 {% block content %}
 <div class="container mt-4">
     <div class="card shadow">
@@ -6,7 +6,7 @@
             <h3>Editar Producto: {{ producto.nombre }}</h3>
         </div>
         <div class="card-body">
-            <form action="{{ url_for('editar_producto', id=producto.id) }}" method="POST">
+            <form action="{{ url_for('routes.editar_producto', id=producto.id) }}" method="POST">
                 <div class="mb-3">
                     <label class="form-label">Nombre</label>
                     <input type="text" name="nombre" class="form-control" value="{{ producto.nombre }}" required>
