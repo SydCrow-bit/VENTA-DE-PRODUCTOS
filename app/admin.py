@@ -21,9 +21,14 @@
 #    def gestion_usuarios():
 #        ...
 #
-# NOTA: Todos los módulos administrativos (Productos, Categorías, 
-# Configuración, etc.) deben implementar los tres decoradores 
-# en ese orden para garantizar la máxima seguridad.
+# =========================================================
+# NOTA IMPORTANTE:
+# @referrer_required permite la navegación interna. Una vez
+# que el usuario entra legalmente desde el Login, puede 
+# moverse por todos los menús. Solo se bloquea si intenta
+# pegar la URL directamente en una pestaña nueva.
+# =========================================================
+
 # =========================================================
 
 from .decorators import admin_required, referrer_required
