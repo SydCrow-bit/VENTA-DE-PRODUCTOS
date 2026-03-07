@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from io import BytesIO
+from openpyxl import Workbook
+from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file
 from flask_login import login_required
 from .models import Producto, Categoria
 from .extensions import db
@@ -74,3 +76,42 @@ def destroy(id):
     
     flash("Producto eliminado exitosamente", "success")
     return redirect(url_for("productos.index"))
+
+@productos_bp.route("/exportar")
+@login_required
+@admin_required
+@referrer_required
+def export_inventario():
+    productos = Producto.query.all()
+    
+    # Crear el libro de Excel
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Inventario de Productos"
+
+    # Cabeceras con estilo (opcional)
+    headers = ['ID', 'Producto', 'Categoría', 'Precio (Bs)', 'Stock', 'Descripción']
+    ws.append(headers)
+
+    # Agregar los datos
+    for p in productos:
+        ws.append([
+            p.id, 
+            p.nombre, 
+            p.categoria.nombre if p.categoria else 'N/A', 
+            float(p.precio), # Convertir Numeric a float para Excel
+            p.stock, 
+            p.descripcion
+        ])
+
+    # Guardar en memoria
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    return send_file(
+        output,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        as_attachment=True,
+        download_name="inventario_productos.xlsx"
+    )
