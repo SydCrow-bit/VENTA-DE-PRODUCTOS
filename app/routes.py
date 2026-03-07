@@ -135,3 +135,42 @@ def crear_producto():
             return redirect(url_for('lista_productos'))
             
     return render_template('admin/crear_producto.html', categorias=categorias)
+
+# AÑADIENDO 3er CODIGO EDITAR Y ELIMINAR - PRODUCTO
+@app.route('/admin/productos/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_producto(id):
+    if current_user.role != 'admin':
+        return "Acceso denegado", 403
+    
+    producto = Product.query.get_or_404(id)
+    categorias = Category.query.all() # Necesarias para el desplegable
+    
+    if request.method == 'POST':
+        producto.nombre = request.form.get('nombre')
+        producto.precio = float(request.form.get('precio'))
+        producto.stock = int(request.form.get('stock'))
+        producto.category_id = int(request.form.get('category_id'))
+        producto.descripcion = request.form.get('descripcion')
+
+        # Validación de campos obligatorios
+        if not producto.nombre or not producto.precio:
+            flash('Nombre y Precio son obligatorios', 'danger')
+        else:
+            db.session.commit()
+            flash('Producto actualizado correctamente', 'success')
+            return redirect(url_for('lista_productos'))
+            
+    return render_template('admin/editar_producto.html', producto=producto, categorias=categorias)
+
+@app.route('/admin/productos/eliminar/<int:id>', methods=['POST'])
+@login_required
+def eliminar_producto(id):
+    if current_user.role != 'admin':
+        return "Acceso denegado", 403
+        
+    producto = Product.query.get_or_404(id)
+    db.session.delete(producto)
+    db.session.commit()
+    flash('Producto eliminado', 'success')
+    return redirect(url_for('lista_productos'))
