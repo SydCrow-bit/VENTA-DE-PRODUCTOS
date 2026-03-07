@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Gestión de Productos</h2>
+    
+    <form method="GET" action="{{ url_for('lista_productos') }}" class="mb-3 d-flex gap-2">
+        <input type="text" name="search" class="form-control" value="{{ busqueda }}" placeholder="Buscar producto por nombre...">
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <a href="{{ url_for('crear_producto') }}" class="btn btn-success mb-3">Nuevo Producto</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prod in productos %}
+            <tr>
+                <td>{{ prod.nombre }}</td>
+                <td><span class="badge bg-info text-dark">{{ prod.categoria.nombre }}</span></td>
+                <td>{{ prod.precio }} Bs.</td>
+                <td>{{ prod.stock }}</td>
+                <td>
+                    <form action="#" method="POST" style="display:inline;">
+                        <button class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
