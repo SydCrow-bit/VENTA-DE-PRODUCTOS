@@ -17,3 +17,32 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+        # CODIGO PARA PRODUCTOS Y CATEGORIA
+
+# 1. Modelo de Categoría
+class Category(db.Model):
+    __tablename__ = 'category' # Debe coincidir con el nombre en tu SQL
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), unique=True, nullable=False)
+    
+    # Esta línea permite acceder a los productos desde la categoría: categoria.productos
+    productos = db.relationship('Product', backref='categoria', lazy=True)
+
+    def __repr__(self):
+        return f'<Category {self.nombre}>'
+
+# 2. Modelo de Producto
+class Product(db.Model):
+    __tablename__ = 'product' # Debe coincidir con el nombre en tu SQL
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    descripcion = db.Column(db.Text, nullable=True)
+    precio = db.Column(db.Float, nullable=False) # Usa Float para decimales
+    stock = db.Column(db.Integer, nullable=False, default=0)
+    
+    # Llave foránea que conecta con la tabla category
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Product {self.nombre}>'
