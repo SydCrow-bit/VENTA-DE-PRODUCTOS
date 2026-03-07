@@ -3,6 +3,17 @@
 <div class="container mt-4">
     <h2>Gestión de Productos</h2>
     
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <form method="GET" action="{{ url_for('lista_productos') }}" class="mb-3 d-flex gap-2">
         <input type="text" name="search" class="form-control" value="{{ busqueda }}" placeholder="Buscar producto por nombre...">
         <button type="submit" class="btn btn-primary">Buscar</button>
@@ -10,8 +21,8 @@
 
     <a href="{{ url_for('crear_producto') }}" class="btn btn-success mb-3">Nuevo Producto</a>
 
-    <table class="table table-striped">
-        <thead>
+    <table class="table table-striped shadow-sm">
+        <thead class="table-dark">
             <tr>
                 <th>Nombre</th>
                 <th>Categoría</th>
@@ -28,10 +39,20 @@
                 <td>{{ prod.precio }} Bs.</td>
                 <td>{{ prod.stock }}</td>
                 <td>
-                    <form action="#" method="POST" style="display:inline;">
-                        <button class="btn btn-sm btn-danger">Eliminar</button>
+                    <a href="{{ url_for('editar_producto', id=prod.id) }}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+
+                    <form action="{{ url_for('eliminar_producto', id=prod.id) }}" method="POST" style="display:inline;">
+                        <button class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar el producto: {{ prod.nombre }}?')">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
                     </form>
                 </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">No se encontraron productos.</td>
             </tr>
             {% endfor %}
         </tbody>
