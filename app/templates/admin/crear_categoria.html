@@ -1,37 +1,35 @@
 {% extends "layout.html" %}
+
 {% block content %}
-<div class="container">
-    <h2>Gestión de Categorías</h2>
-    
-    <form method="GET" action="{{ url_for('lista_categorias') }}" class="mb-3">
-        <input type="text" name="search" value="{{ busqueda }}" placeholder="Buscar categoría...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0">Crear Nueva Categoría</h3>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
 
-    <a href="{{ url_for('crear_categoria') }}" class="btn btn-success mb-3">Nueva Categoría</a>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cat in categorias %}
-            <tr>
-                <td>{{ cat.id }}</td>
-                <td>{{ cat.nombre }}</td>
-                <td>
-                    <a href="{{ url_for('editar_categoria', id=cat.id) }}" class="btn btn-sm btn-warning">Editar</a>
-                    <form action="{{ url_for('eliminar_categoria', id=cat.id) }}" method="POST" style="display:inline;">
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</button>
+                    <form action="{{ url_for('crear_categoria') }}" method="POST">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre de la Categoría</label>
+                            <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ej. Laptops, Celulares" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">Guardar Categoría</button>
+                            <a href="{{ url_for('lista_categorias') }}" class="btn btn-secondary">Cancelar</a>
+                        </div>
                     </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
