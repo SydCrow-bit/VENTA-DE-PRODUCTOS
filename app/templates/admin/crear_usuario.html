@@ -1,44 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Crear Usuario</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h1>Crear Usuario</h1>
+{% block title %}Crear Usuario - Panel Admin{% endblock %}
 
-<form method="POST">
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-user-plus"></i>
+            <h1>Crear Nuevo Usuario</h1>
+            <p>Ingresa los datos para registrar un nuevo acceso al sistema.</p>
+        </div>
 
-<label>Usuario</label>
-<br>
-<input type="text" name="username" required>
+        <form method="POST" class="styled-form">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Nombre de Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Ej: kcopali" required>
+            </div>
 
-<br><br>
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
 
-<label>Password</label>
-<br>
-<input type="password" name="password" required>
+            <div class="form-group">
+                <label for="role"><i class="fas fa-user-tag"></i> Asignar Rol</label>
+                <select id="role" name="role">
+                    <option value="usuario">Usuario Estándar</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
 
-<br><br>
-
-<label>Rol</label>
-<br>
-<select name="role">
-
-<option value="admin">Admin</option>
-<option value="usuario">Usuario</option>
-
-</select>
-
-<br><br>
-
-<button type="submit">Guardar</button>
-
-</form>
-
-<br>
-
-<a href="/admin/usuarios">Volver</a>
-
-</body>
-</html>
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    <i class="fas fa-check"></i> Guardar Usuario
+                </button>
+                <a href="{{ url_for('admin.usuarios') }}" class="btn-cancel">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
