@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Categoría{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-edit" style="color: #f59e0b;"></i>
+            <h1>Editar Categoría</h1>
+        </div>
+
+        <form method="POST" class="styled-form">
+            <div class="form-group">
+                <label for="nombre">Nombre de Categoría</label>
+                <input type="text" id="nombre" name="nombre" value="{{ categoria.nombre }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <input type="text" id="descripcion" name="descripcion" value="{{ categoria.descripcion }}">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save" style="background-color: #f59e0b;">
+                    Actualizar Datos
+                </button>
+                <a href="{{ url_for('categorias.index') }}" class="btn-cancel">
+                    Volver al index
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

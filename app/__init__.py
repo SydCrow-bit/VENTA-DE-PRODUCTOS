@@ -20,10 +20,12 @@ def create_app():
     from .auth import auth_bp
     from .admin import admin_bp
     from .inicio import inicio_bp
+    from .categorias import categorias_bp
 
     # registrar blueprints
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(inicio_bp)
+    app.register_blueprint(categorias_bp)
 
     return app

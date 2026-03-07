@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Categoría{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <i class="fas fa-tags"></i>
+            <h1>Crear Categoría</h1>
+        </div>
+
+        <form method="POST" class="styled-form">
+            <div class="form-group">
+                <label for="nombre">Nombre de Categoría</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <input type="text" id="descripcion" name="descripcion">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-save">
+                    Guardar Categoría
+                </button>
+                <a href="{{ url_for('categorias.index') }}" class="btn-cancel">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
