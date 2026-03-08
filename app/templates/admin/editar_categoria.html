@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Editar Categoría</h2>
+
+    {# El action ahora lleva 'routes.' #}
+    <form action="{{ url_for('routes.editar_categoria', id=categoria.id) }}" method="POST">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre de la Categoría</label>
+            <input type="text" name="nombre" id="nombre" class="form-control" value="{{ categoria.nombre }}" required>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+            {# El enlace de cancelar también lleva 'routes.' #}
+            <a href="{{ url_for('routes.lista_categorias') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

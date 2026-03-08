@@ -60,3 +60,31 @@ Si acabas de bajar el proyecto, haz esto para que te funcione:
 
 Nota: A partir de aquí, el equipo puede empezar a crear los módulos de Productos, Ventas y Categorías usando la base que ya dejé configurada.
 ****************************************************************************************************
+Segundo Integrante: EDWIN HUANCA ARO
+COMO SE IMPLEMENTO EL MODULO
+La implementación se basó en una arquitectura MVC (Modelo-Vista-Controlador) utilizando Flask y SQLAlchemy, estructurada de la siguiente manera:
+
+Modelos de Base de Datos: Se definieron las clases Category y Product con una relación de Uno a Muchos. Se utilizó db.relationship con un backref llamado category para que cada producto pudiera acceder fácilmente al nombre de su categoría.
+
+Modularización con Blueprints: Para organizar el código, se registraron todas las rutas de administración bajo un Blueprint llamado routes, lo que permitió prefijar las URLs (ej. /admin/productos) y mantener el archivo principal limpio.
+
+Controladores y Lógica: Se implementaron funciones CRUD completas que permiten:
+
+Filtrar productos y categorías mediante búsquedas en la base de datos.
+
+Validar formularios para la creación y edición de registros.
+
+Gestionar la eliminación segura de datos mediante métodos POST.
+
+Vistas Dinámicas (Jinja2): Se utilizó herencia de plantillas con un archivo base.html que contiene el sidebar y la barra de navegación, asegurando que el diseño sea consistente en todo el sistema.
+
+LO QUE APRENDI 
+Con todo lo que nos enseño en clases sobre flask y SQLAlchemy me ayudo a desarrollar los modulos de CATEGORIA Y PRODUCTO tambien aprendi con ayuda de la IA los siguientes puntos.
+
+Manejo de Contextos y Blueprints: Aprendi que al usar Blueprints, las funciones url_for deben incluir el nombre del blueprint como prefijo (ej. url_for('routes.lista_productos')), evitando los errores de tipo BuildError.
+
+Relaciones en SQLAlchemy: Comprendi cómo conectar dos tablas mediante llaves foráneas (ForeignKey) y cómo el backref en el modelo es fundamental para mostrar datos relacionados en el HTML sin hacer consultas manuales extras.
+
+Depuración de Errores de Jinja2: Ahora puedo identificar errores comunes de sintaxis, como el uso incorrecto de comillas en etiquetas de Flask o el acceso a atributos no definidos (UndefinedError) cuando el nombre en el modelo no coincide con la plantilla.
+
+Experiencia de Usuario (UX) en el Admin: Implemente mensajes Flash para dar retroalimentación al usuario (ej. "Categoría creada con éxito") y menús desplegables dinámicos que mantienen seleccionada la opción correcta al editar un producto.
