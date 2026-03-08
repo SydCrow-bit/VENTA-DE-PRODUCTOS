@@ -40,6 +40,7 @@ class Product(db.Model):
     descripcion = db.Column(db.Text, nullable=True)
     precio = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer, nullable=False, default=0)
+    imagen = db.Column(db.String(500), nullable=True)
     
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
 
