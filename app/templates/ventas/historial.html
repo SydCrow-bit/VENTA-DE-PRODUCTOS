@@ -10,11 +10,12 @@
         <table class="custom-table" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="border-bottom: 2px solid #f1f5f9;">
-                    <th style="text-align: left; padding: 12px;">Número de Pedido</th>
+                    <th style="text-align: left; padding: 12px;">Pedido</th>
                     <th style="text-align: left; padding: 12px;">Fecha y Hora</th>
                     <th style="text-align: left; padding: 12px;">Comprador</th>
                     <th style="text-align: left; padding: 12px;">Artículos</th>
                     <th style="text-align: right; padding: 12px;">Total Pagado</th>
+                    <th style="text-align: center; padding: 12px;">Factura</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,10 +36,15 @@
                     <td style="padding: 12px; text-align: right; font-weight: bold; color: #3b82f6;">
                         {{ venta.total | round(2) }} Bs.
                     </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <a href="{{ url_for('ventas.recibo', venta_id=venta.id) }}" target="_blank" class="btn-save" style="background-color: #ef4444; padding: 8px 15px; text-decoration: none; font-size: 0.9rem;">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </a>
+                    </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" style="text-align: center; padding: 40px; color: #64748b;">
+                    <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
                         Aún no hay compras registradas en el sistema.
                     </td>
                 </tr>

@@ -124,6 +124,11 @@ async function procesarCompra() {
             alert(data.message);
             carrito = [];
             guardarCarrito();
+            
+            // Abrir la factura en una pestaña nueva
+            window.open(`/ventas/recibo/${data.venta_id}`, '_blank');
+            
+            // Redirigir al usuario al historial en su pestaña actual
             window.location.href = '/ventas/historial';
         } else {
             alert("Error al procesar: " + data.message);

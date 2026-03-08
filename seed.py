@@ -72,7 +72,7 @@ def seed_database():
                 "nombre": "Apple AirPods Pro 2", 
                 "descripcion": "Auriculares in-ear con USB-C y cancelación de ruido.", 
                 "precio": 249.00, "stock": 40, "cat": "Audio",
-                "img": "https://images.unsplash.com/photo-1588423770574-91993ca0684f?q=80&w=800"
+                "img": "https://tecnopolis.com.bo/cdn/shop/files/airp-2.png?crop=center&height=900&v=1757016376&width=720"
             },
             {
                 "nombre": "Logitech MX Master 3S", 
