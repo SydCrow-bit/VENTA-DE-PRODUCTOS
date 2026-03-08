@@ -28,29 +28,31 @@
         </div>
         
         <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-            <a href="{{ url_for('inicio.inicio') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-700 dark:text-zinc-300">
+            <a href="{{ url_for('inicio.inicio') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint == 'inicio.inicio' else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
                 <i class="fas fa-home w-5 text-center"></i> Inicio
             </a>
             
             {% if current_user.role == "admin" %}
                 <div class="px-3 pt-4 pb-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Gestión Admin</div>
-                <a href="{{ url_for('admin.usuarios') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-700 dark:text-zinc-300">
+                <a href="{{ url_for('admin.usuarios') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint and request.endpoint.startswith('admin.') else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
                     <i class="fas fa-users w-5 text-center"></i> Usuarios
+                </a>
+                
+                <div class="px-3 pt-4 pb-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Inventario</div>
+                <a href="{{ url_for('routes.lista_productos') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint and 'producto' in request.endpoint else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                    <i class="fas fa-laptop w-5 text-center"></i> Productos
+                </a>
+                <a href="{{ url_for('routes.lista_categorias') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint and 'categoria' in request.endpoint else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                    <i class="fas fa-tags w-5 text-center"></i> Categorías
                 </a>
             {% endif %}
 
             <div class="px-3 pt-4 pb-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Operaciones</div>
-            <a href="{{ url_for('routes.lista_productos') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-700 dark:text-zinc-300">
-                <i class="fas fa-laptop w-5 text-center"></i> Productos
-            </a>
-            <a href="{{ url_for('ventas.catalogo') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-700 dark:text-zinc-300">
+            <a href="{{ url_for('ventas.catalogo') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint in ['ventas.catalogo', 'ventas.carrito'] else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
                 <i class="fas fa-shopping-cart w-5 text-center"></i> Catálogo
             </a>
-            <a href="{{ url_for('ventas.historial') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-700 dark:text-zinc-300">
+            <a href="{{ url_for('ventas.historial') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint == 'ventas.historial' else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
                 <i class="fas fa-file-invoice-dollar w-5 text-center"></i> Compras
-            </a>
-            <a href="{{ url_for('routes.lista_categorias') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-700 dark:text-zinc-300">
-                <i class="fas fa-tags w-5 text-center"></i> Categorías
             </a>
         </nav>
 
@@ -65,7 +67,7 @@
         <header class="h-16 bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-8 sticky top-0 z-10">
             <div class="flex items-center gap-4">
                 <span class="text-sm font-medium">Bienvenido, {{ current_user.username }}</span>
-                <span class="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-800 px-2.5 py-0.5 text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 uppercase">
+                <span class="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-800 px-2.5 py-0.5 text-xs font-semibold uppercase {% if current_user.role == 'admin' %}bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400{% else %}bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400{% endif %}">
                     {{ current_user.role }}
                 </span>
             </div>
@@ -102,7 +104,6 @@
         const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
         const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
 
-        // Establecer ícono inicial
         if (document.documentElement.classList.contains('dark')) {
             themeToggleLightIcon.classList.remove('hidden');
         } else {
@@ -112,11 +113,9 @@
         const themeToggleBtn = document.getElementById('theme-toggle');
 
         themeToggleBtn.addEventListener('click', function() {
-            // Intercambiar íconos
             themeToggleDarkIcon.classList.toggle('hidden');
             themeToggleLightIcon.classList.toggle('hidden');
 
-            // Intercambiar tema
             if (document.documentElement.classList.contains('dark')) {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
