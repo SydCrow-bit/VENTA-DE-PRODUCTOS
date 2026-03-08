@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Carrito{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Mi Carrito de Compras</h2>
+    
+    <div class="table-responsive" style="margin-top: 20px;">
+        <table class="custom-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #f1f5f9;">
+                    <th style="text-align: left; padding: 12px;">Producto</th>
+                    <th style="text-align: right; padding: 12px;">Precio Unit.</th>
+                    <th style="text-align: center; padding: 12px;">Cantidad</th>
+                    <th style="text-align: right; padding: 12px;">Subtotal</th>
+                    <th style="text-align: center; padding: 12px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="carrito-body">
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+        <a href="{{ url_for('ventas.catalogo') }}" class="btn-cancel" style="padding: 10px 20px; background: #f1f5f9; border-radius: 8px;">Seguir Comprando</a>
+        <div style="text-align: right;">
+            <h3 style="margin: 0 0 15px 0; color: #1e293b;">Total: <span id="carrito-total" style="color: #3b82f6;">0.00</span> Bs.</h3>
+            <button class="btn-save" onclick="procesarCompra()" style="padding: 12px 30px; font-size: 1.1rem;">Finalizar Compra</button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", renderizarCarrito);
+</script>
+{% endblock %}

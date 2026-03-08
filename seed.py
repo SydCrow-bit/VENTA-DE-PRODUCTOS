@@ -9,7 +9,7 @@ def seed_database():
         # Seccion Usuarios
         users_data = [
             {"username": "fer", "password": "12345678", "role": "admin"},
-            {"username": "user", "password": "12346578", "role": "user"}
+            {"username": "user", "password": "12345678", "role": "user"}
         ]
 
         for data in users_data:
@@ -54,7 +54,7 @@ def seed_database():
                 "nombre": "iPhone 15 Pro", 
                 "descripcion": "Apple A17 Pro, 256GB, Titanio Natural.", 
                 "precio": 1099.00, "stock": 25, "cat": "Smartphones",
-                "img": "https://images.unsplash.com/photo-1696446701796-da61225697cc?q=80&w=800"
+                "img": "https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_pro.png"
             },
             {
                 "nombre": "Samsung Galaxy S24 Ultra", 

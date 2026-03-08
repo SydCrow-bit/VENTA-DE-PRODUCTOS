@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Historial de Compras{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Historial de Compras</h2>
+    
+    <div class="table-responsive" style="margin-top: 20px;">
+        <table class="custom-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #f1f5f9;">
+                    <th style="text-align: left; padding: 12px;">Número de Pedido</th>
+                    <th style="text-align: left; padding: 12px;">Fecha y Hora</th>
+                    <th style="text-align: left; padding: 12px;">Comprador</th>
+                    <th style="text-align: left; padding: 12px;">Artículos</th>
+                    <th style="text-align: right; padding: 12px;">Total Pagado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for venta in ventas %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 12px; font-weight: bold;">#{{ venta.id }}</td>
+                    <td style="padding: 12px; color: #64748b;">{{ venta.fecha.strftime('%d-%m-%Y %H:%M') }}</td>
+                    <td style="padding: 12px;">
+                        <span class="badge badge-usuario">{{ venta.usuario.username }}</span>
+                    </td>
+                    <td style="padding: 12px;">
+                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9rem; color: #475569;">
+                            {% for detalle in venta.detalles %}
+                                <li>{{ detalle.cantidad }}x {{ detalle.producto.nombre }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="padding: 12px; text-align: right; font-weight: bold; color: #3b82f6;">
+                        {{ venta.total | round(2) }} Bs.
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: #64748b;">
+                        Aún no hay compras registradas en el sistema.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
