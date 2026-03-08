@@ -4,9 +4,45 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Historial de Compras</h2>
+    <h2 style="margin-bottom: 20px;">Historial de Compras</h2>
     
-    <div class="table-responsive" style="margin-top: 20px;">
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
+        <form method="GET" action="{{ url_for('ventas.historial') }}" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+            
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">No. Pedido</label>
+                <input type="number" name="pedido_id" value="{{ filtros.pedido_id }}" placeholder="Ej. 15" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100px;">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Desde la fecha</label>
+                <input type="date" name="fecha_inicio" value="{{ filtros.fecha_inicio }}" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Hasta la fecha</label>
+                <input type="date" name="fecha_fin" value="{{ filtros.fecha_fin }}" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            </div>
+
+            {% if current_user.role == 'admin' %}
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Comprador</label>
+                <input type="text" name="comprador" value="{{ filtros.comprador }}" placeholder="Nombre de usuario" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            </div>
+            {% endif %}
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn-save" style="padding: 9px 20px;">
+                    <i class="fas fa-search"></i> Filtrar
+                </button>
+                <a href="{{ url_for('ventas.historial') }}" class="btn-cancel" style="padding: 9px 20px; background: #f1f5f9; border-radius: 6px; text-decoration: none; color: #475569; display: flex; align-items: center; gap: 5px;">
+                    <i class="fas fa-eraser"></i> Limpiar
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <div class="table-responsive">
         <table class="custom-table" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr style="border-bottom: 2px solid #f1f5f9;">
@@ -45,7 +81,7 @@
                 {% else %}
                 <tr>
                     <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
-                        Aún no hay compras registradas en el sistema.
+                        No se encontraron compras que coincidan con los filtros.
                     </td>
                 </tr>
                 {% endfor %}

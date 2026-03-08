@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, jsonify, make_response
 from flask_login import login_required, current_user
 from fpdf import FPDF
 from .extensions import db
-from .models import Product, Venta, DetalleVenta
+from .models import Product, Venta, DetalleVenta, User
 
 ventas_bp = Blueprint('ventas', __name__, url_prefix='/ventas')
 
@@ -171,9 +171,34 @@ def recibo(venta_id):
 @ventas_bp.route('/historial')
 @login_required
 def historial():
-    if current_user.role == 'admin':
-        ventas = Venta.query.order_by(Venta.fecha.desc()).all()
-    else:
-        ventas = Venta.query.filter_by(user_id=current_user.id).order_by(Venta.fecha.desc()).all()
+    pedido_id = request.args.get('pedido_id', '')
+    fecha_inicio = request.args.get('fecha_inicio', '')
+    fecha_fin = request.args.get('fecha_fin', '')
+    comprador = request.args.get('comprador', '')
+
+    query = Venta.query.join(User)
+
+    if current_user.role != 'admin':
+        query = query.filter(Venta.user_id == current_user.id)
+    elif comprador:
+        query = query.filter(User.username.ilike(f"%{comprador}%"))
+
+    if pedido_id.isdigit():
+        query = query.filter(Venta.id == int(pedido_id))
+    
+    if fecha_inicio:
+        query = query.filter(Venta.fecha >= f"{fecha_inicio} 00:00:00")
         
-    return render_template('ventas/historial.html', ventas=ventas)
+    if fecha_fin:
+        query = query.filter(Venta.fecha <= f"{fecha_fin} 23:59:59")
+
+    ventas = query.order_by(Venta.fecha.desc()).all()
+    
+    filtros = {
+        'pedido_id': pedido_id,
+        'fecha_inicio': fecha_inicio,
+        'fecha_fin': fecha_fin,
+        'comprador': comprador
+    }
+        
+    return render_template('ventas/historial.html', ventas=ventas, filtros=filtros)
