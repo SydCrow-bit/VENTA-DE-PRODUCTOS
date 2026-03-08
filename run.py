@@ -5,6 +5,5 @@ from app.models import User
 app = create_app()
 
 if __name__ == "__main__":
-    with app.app_context():
-        # Ya no usamos db.create_all(), las migraciones se encargan de eso
+    # If you aren't running db.create_all(), you don't need the context block here
     app.run(debug=True)
