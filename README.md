@@ -88,3 +88,21 @@ Relaciones en SQLAlchemy: Comprendi cómo conectar dos tablas mediante llaves fo
 Depuración de Errores de Jinja2: Ahora puedo identificar errores comunes de sintaxis, como el uso incorrecto de comillas en etiquetas de Flask o el acceso a atributos no definidos (UndefinedError) cuando el nombre en el modelo no coincide con la plantilla.
 
 Experiencia de Usuario (UX) en el Admin: Implemente mensajes Flash para dar retroalimentación al usuario (ej. "Categoría creada con éxito") y menús desplegables dinámicos que mantienen seleccionada la opción correcta al editar un producto.
+
+****************************************************************************************************
+Tercer Integrante: Luis Fernando Patiño Nina
+Módulo de Ventas, Filtros Avanzados y Exportación a PDF
+
+COMO SE IMPLEMENTO EL MODULO
+Implementé el módulo de ventas separando la lógica en un Blueprint (`ventas.py`). Para la experiencia de usuario, utilicé `localStorage` mediante JavaScript (`carrito.js`), lo que permite a los usuarios armar su carrito sin hacer peticiones constantes al servidor y no perder los productos que agregó al carrito. Al finalizar, los datos se envían mediante un POST en formato JSON al backend, donde se procesa la transacción y se descuenta el stock interactuando con las tablas `Venta` y `DetalleVenta`.
+
+EL RETO DE EQUIPO: PDF Y FILTROS AVANZADOS
+Para cumplir con el reto extra, implementé dos características:
+1. Exportación a PDF: Utilicé la librería `fpdf2` en Python. Al procesar la compra o desde el historial, se genera un documento PDF estructurado en memoria iterando sobre las relaciones de SQLAlchemy (`venta.detalles`) y se devuelve directamente al navegador mediante `make_response`.
+2. Filtros Avanzados: En el historial de compras, implementé una búsqueda por múltiples criterios (Rango de fechas, ID de pedido y Nombre de comprador si es Admin) utilizando la construcción dinámica de consultas (`query.filter()`) en SQLAlchemy.
+
+LO QUE APRENDI
+* Aprendí a integrar JavaScript asíncrono (`fetch`) con Flask para enviar datos JSON de forma segura.
+* Comprendí el uso de librerías externas como `fpdf2` para generar documentos al vuelo sin necesidad de guardar archivos temporales en el servidor.
+* Reforcé el concepto de consultas avanzadas y relaciones en SQLAlchemy, aprendiendo a filtrar datos dinámicamente dependiendo del rol del usuario autenticado.
+****************************************************************************************************
