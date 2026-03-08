@@ -1,37 +1,64 @@
 {% extends "base.html" %}
+
+{% block title %}Gestión de Categorías{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>Gestión de Categorías</h2>
-    
-    <form method="GET" action="{{ url_for('routes.lista_categorias') }}" class="mb-3">
-        <input type="text" name="search" value="{{ busqueda }}" placeholder="Buscar categoría...">
-        <button type="submit" class="btn btn-primary">Buscar</button>
-    </form>
+<div class="flex flex-col gap-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-2xl font-semibold tracking-tight">Gestión de Categorías</h2>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Organiza los productos de tu tienda.</p>
+        </div>
+        <a href="{{ url_for('routes.crear_categoria') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2 gap-2 shadow-sm">
+            <i class="fas fa-plus"></i> Nueva Categoría
+        </a>
+    </div>
 
-    <a href="{{ url_for('routes.crear_categoria') }}" class="btn btn-success mb-3">Nueva Categoría</a>
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm">
+        <form method="GET" action="{{ url_for('routes.lista_categorias') }}" class="flex items-center gap-2 max-w-sm">
+            <input type="text" name="search" value="{{ busqueda }}" placeholder="Buscar categoría..." class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300">
+            <button type="submit" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2">
+                Buscar
+            </button>
+        </form>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cat in categorias %}
-            <tr>
-                <td>{{ cat.id }}</td>
-                <td>{{ cat.nombre }}</td>
-                <td>
-                    <a href="{{ url_for('routes.editar_categoria', id=cat.id) }}" class="btn btn-sm btn-warning">Editar</a>
-                    <form action="{{ url_for('routes.eliminar_categoria', id=cat.id) }}" method="POST" style="display:inline;">
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm overflow-hidden">
+        <div class="w-full overflow-auto">
+            <table class="w-full caption-bottom text-sm">
+                <thead class="[&_tr]:border-b [&_tr]:border-zinc-200 dark:[&_tr]:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+                    <tr class="border-b transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50">
+                        <th class="h-12 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">ID</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">Nombre</th>
+                        <th class="h-12 px-4 text-center align-middle font-medium text-zinc-500 dark:text-zinc-400">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="[&_tr:last-child]:border-0">
+                    {% for cat in categorias %}
+                    <tr class="border-b border-zinc-200 dark:border-zinc-800 transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50">
+                        <td class="p-4 align-middle font-medium">{{ cat.id }}</td>
+                        <td class="p-4 align-middle">{{ cat.nombre }}</td>
+                        <td class="p-4 align-middle text-center">
+                            <div class="flex justify-center gap-2">
+                                <a href="{{ url_for('routes.editar_categoria', id=cat.id) }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-8 px-3">
+                                    Editar
+                                </a>
+                                <form action="{{ url_for('routes.eliminar_categoria', id=cat.id) }}" method="POST" class="m-0">
+                                    <button class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-950/30 dark:hover:text-red-400 dark:hover:border-red-900 h-8 px-3" onclick="return confirm('¿Eliminar esta categoría?')">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="p-8 text-center text-zinc-500 dark:text-zinc-400">No se encontraron categorías.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

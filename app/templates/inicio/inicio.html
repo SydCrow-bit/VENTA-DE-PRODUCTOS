@@ -3,19 +3,188 @@
 {% block title %}Inicio - Panel Principal{% endblock %}
 
 {% block content %}
-    <h1>Panel Principal</h1>
-    <p>Bienvenido al sistema de gestión de ventas.</p>
-    
-    <div class="cards-grid">
-        <div class="card">
-            <h3>Ventas</h3>
-            <p>Registrar una nueva venta</p>
-            <a href="#" class="btn-card">Ir a Ventas</a>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="flex flex-col gap-6">
+    <div>
+        <h2 class="text-2xl font-semibold tracking-tight">Panel Principal</h2>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Resumen analítico y accesos directos del sistema.</p>
+    </div>
+
+    {% if rol == 'admin' %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2">
+                <p class="text-sm font-medium tracking-tight text-zinc-500 dark:text-zinc-400">Ingresos Totales</p>
+                <i class="fas fa-dollar-sign text-zinc-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold">{{ datos.total_ventas | round(2) }} Bs.</h3>
         </div>
-        <div class="card">
-            <h3>Productos</h3>
-            <p>Ver inventario disponible</p>
-            <a href="{{ url_for('routes.lista_productos') }}" class="btn-card">Ver Catálogo</a>
+        
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2">
+                <p class="text-sm font-medium tracking-tight text-zinc-500 dark:text-zinc-400">Ventas Realizadas</p>
+                <i class="fas fa-shopping-cart text-zinc-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold">+{{ datos.total_pedidos }}</h3>
+        </div>
+
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2">
+                <p class="text-sm font-medium tracking-tight text-zinc-500 dark:text-zinc-400">Productos en Catálogo</p>
+                <i class="fas fa-box text-zinc-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold">{{ datos.total_productos }}</h3>
+        </div>
+
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2">
+                <p class="text-sm font-medium tracking-tight text-zinc-500 dark:text-zinc-400">Usuarios Registrados</p>
+                <i class="fas fa-users text-zinc-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold">{{ datos.total_usuarios }}</h3>
         </div>
     </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm">
+            <h3 class="font-semibold tracking-tight mb-4">Ingresos (Últimos 7 días)</h3>
+            <div class="relative h-[300px] w-full">
+                <canvas id="ventasChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm">
+            <h3 class="font-semibold tracking-tight mb-4">Top 5 Productos Más Vendidos</h3>
+            <div class="relative h-[300px] w-full">
+                <canvas id="topProductosChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Configuración común para que los gráficos se adapten al modo oscuro
+            const textColor = document.documentElement.classList.contains('dark') ? '#e4e4e7' : '#27272a';
+            const gridColor = document.documentElement.classList.contains('dark') ? '#27272a' : '#e4e4e7';
+
+            // Gráfico de Ventas
+            const ctxVentas = document.getElementById('ventasChart').getContext('2d');
+            new Chart(ctxVentas, {
+                type: 'line',
+                data: {
+                    labels: {{ datos.fechas_chart | tojson }},
+                    datasets: [{
+                        label: 'Ingresos en Bs.',
+                        data: {{ datos.totales_chart | tojson }},
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
+                        x: { grid: { display: false }, ticks: { color: textColor } }
+                    }
+                }
+            });
+
+            // Gráfico de Top Productos
+            const ctxTop = document.getElementById('topProductosChart').getContext('2d');
+            new Chart(ctxTop, {
+                type: 'bar',
+                data: {
+                    labels: {{ datos.top_nombres | tojson }},
+                    datasets: [{
+                        label: 'Unidades vendidas',
+                        data: {{ datos.top_cantidades | tojson }},
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { stepSize: 1, color: textColor } },
+                        x: { grid: { display: false }, ticks: { color: textColor } }
+                    }
+                }
+            });
+        });
+    </script>
+
+    {% else %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2">
+                <p class="text-sm font-medium tracking-tight text-zinc-500 dark:text-zinc-400">Total Gastado</p>
+                <i class="fas fa-wallet text-zinc-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ datos.total_gastado | round(2) }} Bs.</h3>
+        </div>
+        
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2">
+                <p class="text-sm font-medium tracking-tight text-zinc-500 dark:text-zinc-400">Mis Pedidos</p>
+                <i class="fas fa-box-open text-zinc-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold">{{ datos.mis_pedidos }}</h3>
+        </div>
+
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm flex flex-col justify-between gap-2">
+            <p class="text-sm font-medium tracking-tight text-zinc-500 dark:text-zinc-400 mb-2">Accesos Rápidos</p>
+            <a href="{{ url_for('ventas.catalogo') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-9 px-4 w-full">
+                Ir a la Tienda
+            </a>
+            <a href="{{ url_for('ventas.historial') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-9 px-4 w-full">
+                Ver Facturas
+            </a>
+        </div>
+    </div>
+
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm overflow-hidden mt-2">
+        <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
+            <h3 class="font-semibold tracking-tight">Mis Últimas Compras</h3>
+        </div>
+        <div class="w-full overflow-auto">
+            <table class="w-full caption-bottom text-sm">
+                <thead class="[&_tr]:border-b [&_tr]:border-zinc-200 dark:[&_tr]:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+                    <tr class="border-b transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50">
+                        <th class="h-10 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">Pedido</th>
+                        <th class="h-10 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">Fecha</th>
+                        <th class="h-10 px-4 text-right align-middle font-medium text-zinc-500 dark:text-zinc-400">Total</th>
+                        <th class="h-10 px-4 text-center align-middle font-medium text-zinc-500 dark:text-zinc-400">Recibo</th>
+                    </tr>
+                </thead>
+                <tbody class="[&_tr:last-child]:border-0">
+                    {% for venta in datos.compras_recientes %}
+                    <tr class="border-b border-zinc-200 dark:border-zinc-800 transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50">
+                        <td class="p-4 align-middle font-medium">#{{ venta.id }}</td>
+                        <td class="p-4 align-middle text-zinc-500 dark:text-zinc-400">{{ venta.fecha.strftime('%d-%m-%Y') }}</td>
+                        <td class="p-4 align-middle text-right font-medium">{{ venta.total | round(2) }} Bs.</td>
+                        <td class="p-4 align-middle text-center">
+                            <a href="{{ url_for('ventas.recibo', venta_id=venta.id) }}" target="_blank" class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-100 h-8 px-3">
+                                <i class="fas fa-file-pdf mr-1 text-red-500"></i> Ver
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-zinc-500 dark:text-zinc-400">Aún no has realizado ninguna compra.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

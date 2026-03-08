@@ -4,67 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Venta Electrónicos{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <style type="text/tailwindcss">
+        @custom-variant dark (&:is(.dark *));
+    </style>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body>
+<body class="bg-zinc-50 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 min-h-screen flex antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
 
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>Venta Electrónicos</h3>
+    <aside class="w-64 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-screen sticky top-0">
+        <div class="h-16 flex items-center px-6 border-b border-zinc-200 dark:border-zinc-800">
+            <h3 class="font-bold text-lg tracking-tight"><i class="fas fa-bolt text-zinc-900 dark:text-zinc-50"></i> Electrónicos</h3>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="{{ url_for('inicio.inicio') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint == 'inicio.inicio' else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                <i class="fas fa-home w-5 text-center"></i> Inicio
+            </a>
+            
+            {% if current_user.role == "admin" %}
+                <div class="px-3 pt-4 pb-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Gestión Admin</div>
+                <a href="{{ url_for('admin.usuarios') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint and request.endpoint.startswith('admin.') else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                    <i class="fas fa-users w-5 text-center"></i> Usuarios
+                </a>
+                
+                <div class="px-3 pt-4 pb-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Inventario</div>
+                <a href="{{ url_for('routes.lista_productos') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint and 'producto' in request.endpoint else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                    <i class="fas fa-laptop w-5 text-center"></i> Productos
+                </a>
+                <a href="{{ url_for('routes.lista_categorias') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint and 'categoria' in request.endpoint else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                    <i class="fas fa-tags w-5 text-center"></i> Categorías
+                </a>
+            {% endif %}
+
+            <div class="px-3 pt-4 pb-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Operaciones</div>
+            <a href="{{ url_for('ventas.catalogo') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint in ['ventas.catalogo', 'ventas.carrito'] else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                <i class="fas fa-shopping-cart w-5 text-center"></i> Catálogo
+            </a>
+            <a href="{{ url_for('ventas.historial') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors {{ 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 font-semibold' if request.endpoint == 'ventas.historial' else 'font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                <i class="fas fa-file-invoice-dollar w-5 text-center"></i> Compras
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-zinc-200 dark:border-zinc-800">
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+                <i class="fas fa-sign-out-alt w-5 text-center"></i> Cerrar sesión
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-h-screen">
+        <header class="h-16 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between px-8 sticky top-0 z-10">
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-medium">Bienvenido, {{ current_user.username }}</span>
+                <span class="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-800 px-2.5 py-0.5 text-xs font-semibold uppercase {% if current_user.role == 'admin' %}bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400{% else %}bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400{% endif %}">
+                    {{ current_user.role }}
+                </span>
             </div>
             
-            <nav class="sidebar-menu">
-                <ul>
-                    <li><a href="{{ url_for('inicio.inicio') }}"><i class="fas fa-home"></i> Inicio</a></li>
-                    
-                    {% if current_user.role == "admin" %}
-                        <li class="menu-label">Gestión Admin</li>
-                        <li><a href="{{ url_for('admin.usuarios') }}"><i class="fas fa-users"></i> Usuarios</a></li>
+            <button id="theme-toggle" class="h-9 w-9 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 inline-flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                <i id="theme-toggle-dark-icon" class="fas fa-moon hidden text-zinc-700 dark:text-zinc-300"></i>
+                <i id="theme-toggle-light-icon" class="fas fa-sun hidden text-zinc-700 dark:text-zinc-300"></i>
+            </button>
+        </header>
 
-                    {% endif %}
-
-                    <li class="menu-label">Operaciones</li>
-                    <li><a href="{{ url_for('routes.lista_productos') }}"><i class="fas fa-laptop"></i> Productos</a></li>
-
-                    <li><a href="#"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
-
-                    <li><a href="{{ url_for('routes.lista_categorias') }}"><i class="fas fa-tags"></i> Categorías</a></li>
-                </ul>
-            </nav>
-
-            <div class="sidebar-footer">
-                <a href="{{ url_for('auth.logout') }}" class="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
-                </a>
-            </div>
-        </aside>
-
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="user-info">
-                    <span>Bienvenido, <strong>{{ current_user.username }}</strong></span>
-                    <span class="badge">{{ current_user.role }}</span>
-                </div>
-            </header>
-
-            <section class="content-body">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">
-                                <i class="fas fa-info-circle"></i> {{ message }}
-                                <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <div class="p-8 max-w-7xl mx-auto w-full">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-6 space-y-2">
+                    {% for category, message in messages %}
+                        {% set color = 'bg-green-50 text-green-900 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900' if category == 'success' else 'bg-red-50 text-red-900 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900' %}
+                        <div class="flex items-center justify-between p-4 border rounded-lg {{ color }} shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                                <span class="text-sm font-medium">{{ message }}</span>
                             </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                
-                {% block content %}{% endblock %}
-            </section>
-        </main>
-    </div>
+                            <button onclick="this.parentElement.style.display='none'" class="text-current opacity-70 hover:opacity-100"><i class="fas fa-times"></i></button>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
 
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script>
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (document.documentElement.classList.contains('dark')) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        themeToggleBtn.addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
 </body>
 </html>

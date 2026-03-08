@@ -3,38 +3,34 @@
 {% block title %}Editar Usuario - {{ usuario.username }}{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <div class="form-card">
-        <div class="form-header">
-            <i class="fas fa-user-edit" style="color: #f59e0b;"></i>
-            <h1>Editar Usuario</h1>
-            <p>Modificando la cuenta de: <strong>{{ usuario.username }}</strong></p>
+<div class="flex items-center justify-center py-10">
+    <div class="w-full max-w-md rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-8 shadow-sm">
+        <div class="flex flex-col space-y-1.5 mb-6 text-center">
+            <i class="fas fa-user-edit text-3xl text-zinc-900 dark:text-zinc-50 mb-2"></i>
+            <h3 class="font-semibold tracking-tight text-2xl">Editar Usuario</h3>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Modificando la cuenta de: <strong>{{ usuario.username }}</strong></p>
         </div>
 
-        <form method="POST" class="styled-form">
-            <div class="form-group">
-                <label for="username"><i class="fas fa-user"></i> Nombre de Usuario</label>
-                <input type="text" id="username" name="username" value="{{ usuario.username }}" required>
+        <form method="POST" class="space-y-4">
+            <div class="space-y-2">
+                <label for="username" class="text-sm font-medium leading-none">Nombre de Usuario</label>
+                <input type="text" id="username" name="username" value="{{ usuario.username }}" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300">
             </div>
 
-            <div class="form-group">
-                <label for="role"><i class="fas fa-user-tag"></i> Cambiar Rol</label>
-                <select id="role" name="role">
-                    <option value="usuario" {{ 'selected' if usuario.role == 'usuario' else '' }}>
-                        Usuario Estándar
-                    </option>
-                    <option value="admin" {{ 'selected' if usuario.role == 'admin' else '' }}>
-                        Administrador
-                    </option>
+            <div class="space-y-2">
+                <label for="role" class="text-sm font-medium leading-none">Cambiar Rol</label>
+                <select id="role" name="role" class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300 [&>option]:text-zinc-950">
+                    <option value="user" {{ 'selected' if usuario.role == 'user' else '' }}>Usuario Estándar</option>
+                    <option value="admin" {{ 'selected' if usuario.role == 'admin' else '' }}>Administrador</option>
                 </select>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn-save" style="background-color: #f59e0b;">
-                    <i class="fas fa-sync-alt"></i> Actualizar Datos
+            <div class="flex flex-col gap-2 pt-4">
+                <button type="submit" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2">
+                    Actualizar Datos
                 </button>
-                <a href="{{ url_for('admin.usuarios') }}" class="btn-cancel">
-                    <i class="fas fa-arrow-left"></i> Volver al listado
+                <a href="{{ url_for('admin.usuarios') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-10 px-4 py-2">
+                    Volver al listado
                 </a>
             </div>
         </form>

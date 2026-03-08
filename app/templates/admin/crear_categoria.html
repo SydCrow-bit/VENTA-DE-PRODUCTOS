@@ -1,35 +1,30 @@
 {% extends "base.html" %}
 
-{% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white">
-                    <h3 class="card-title mb-0">Crear Nueva Categoría</h3>
-                </div>
-                <div class="card-body">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }}">{{ message }}</div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
+{% block title %}Nueva Categoría{% endblock %}
 
-                    <form action="{{ url_for('routes.crear_categoria') }}" method="POST">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre de la Categoría</label>
-                            <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ej. Laptops, Celulares" required>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success">Guardar Categoría</button>
-                            <a href="{{ url_for('routes.lista_categorias') }}" class="btn btn-secondary">Cancelar</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+{% block content %}
+<div class="flex items-center justify-center py-10">
+    <div class="w-full max-w-md rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-8 shadow-sm">
+        <div class="flex flex-col space-y-1.5 mb-6">
+            <h3 class="font-semibold tracking-tight text-2xl">Crear Nueva Categoría</h3>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Ingresa el nombre de la nueva clasificación.</p>
         </div>
+
+        <form action="{{ url_for('routes.crear_categoria') }}" method="POST" class="space-y-4">
+            <div class="space-y-2">
+                <label for="nombre" class="text-sm font-medium leading-none">Nombre de la Categoría</label>
+                <input type="text" name="nombre" id="nombre" placeholder="Ej. Laptops, Celulares" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300">
+            </div>
+
+            <div class="flex flex-col gap-2 pt-4">
+                <button type="submit" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2">
+                    Guardar Categoría
+                </button>
+                <a href="{{ url_for('routes.lista_categorias') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-10 px-4 py-2">
+                    Cancelar
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
