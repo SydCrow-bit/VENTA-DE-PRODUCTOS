@@ -1,39 +1,135 @@
-<!DOCTYPE html>
-<html lang="es" class="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - Venta Electrónicos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 min-h-screen flex items-center justify-center p-4 antialiased">
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:is(.dark *));
 
-    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-8">
-        <div class="flex flex-col space-y-1.5 mb-6 text-center">
-            <div class="w-12 h-12 bg-zinc-900 dark:bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-2">
-                <i class="fas fa-bolt text-xl text-zinc-50 dark:text-zinc-900"></i>
-            </div>
-            <h3 class="font-semibold tracking-tight text-2xl">Bienvenido</h3>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Ingresa tus credenciales para continuar</p>
-        </div>
+      @keyframes blob-float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+      }
+      .animate-blob {
+        animation: blob-float 7s infinite alternate ease-in-out;
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script>
+      if (
+        localStorage.getItem("theme") === "dark" ||
+        (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+      }
+    </script>
+  </head>
+  <body class="relative min-h-screen flex items-center justify-center p-4 antialiased overflow-hidden bg-zinc-50 dark:bg-zinc-950 transition-colors duration-500">
 
-        <form method="POST" class="space-y-4">
-            <div class="space-y-2">
-                <label for="username" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Usuario</label>
-                <input type="text" name="username" id="username" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-300 disabled:cursor-not-allowed disabled:opacity-50">
-            </div>
-            
-            <div class="space-y-2">
-                <label for="password" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Contraseña</label>
-                <input type="password" name="password" id="password" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-300 disabled:cursor-not-allowed disabled:opacity-50">
-            </div>
-
-            <button type="submit" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 disabled:pointer-events-none disabled:opacity-50 bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2 w-full mt-2">
-                Iniciar Sesión
-            </button>
-        </form>
+    <div class="absolute inset-0 -z-10 overflow-hidden">
+      <div class="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-blue-400/30 blur-[80px] animate-blob"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-indigo-500/20 blur-[100px] animate-blob" style="animation-delay: 2s"></div>
+      <div class="absolute top-1/2 left-1/2 w-64 h-64 rounded-full bg-emerald-400/20 blur-[90px] animate-blob" style="animation-delay: 4s"></div>
     </div>
 
-</body>
+    <div class="relative w-full max-w-sm backdrop-blur-2xl bg-white/10 dark:bg-zinc-900/20 border border-white/30 dark:border-zinc-700/30 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] p-8">
+
+      <!-- Theme toggle -->
+      <button
+        id="theme-toggle"
+        class="absolute top-6 right-6 h-10 w-10 rounded-2xl bg-white/20 dark:bg-zinc-800/30 border border-white/20 dark:border-zinc-700/30 flex items-center justify-center hover:bg-white/40 dark:hover:bg-zinc-700/50 transition-all active:scale-90 cursor-pointer z-50"
+      >
+        <i id="theme-toggle-dark-icon" class="fas fa-moon text-zinc-800"></i>
+        <i id="theme-toggle-light-icon" class="fas fa-sun text-amber-400 hidden"></i>
+      </button>
+
+      <!-- Header -->
+      <div class="flex flex-col space-y-2 mb-10 text-center">
+        <div class="w-16 h-16 bg-zinc-900 dark:bg-zinc-50 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl -rotate-6 hover:rotate-0 transition-all duration-500">
+          <i class="fas fa-bolt text-3xl text-zinc-50 dark:text-zinc-900"></i>
+        </div>
+        <h3 class="font-black tracking-tight text-3xl text-zinc-900 dark:text-zinc-50">Bienvenido</h3>
+        <p class="text-sm font-medium text-zinc-600 dark:text-zinc-400">Accede a tu cuenta</p>
+      </div>
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="mb-6 space-y-2">
+            {% for category, message in messages %}
+              <div class="rounded-2xl px-4 py-3 text-sm font-semibold flex items-center gap-2
+                {% if category == 'error' %}
+                  bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30
+                {% else %}
+                  bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30
+                {% endif %}">
+                <i class="fas {% if category == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <!-- Form -->
+      <form method="POST" class="space-y-6">
+        <div class="space-y-2">
+          <label for="username" class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 ml-2">Usuario</label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            required
+            class="dark:text-white flex h-12 w-full rounded-2xl border border-white/40 dark:border-zinc-700/40 bg-white/20 dark:bg-zinc-950/20 px-5 py-2 text-sm backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-zinc-400"
+          />
+        </div>
+
+        <div class="space-y-2">
+          <label for="password" class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 ml-2">Contraseña</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+            class="dark:text-white flex h-12 w-full rounded-2xl border border-white/40 dark:border-zinc-700/40 bg-white/20 dark:bg-zinc-950/20 px-5 py-2 text-sm backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-zinc-400"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="w-full h-12 inline-flex items-center justify-center rounded-2xl text-sm font-black bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-[1.03] active:scale-[0.97] transition-all mt-4"
+        >
+          INICIAR SESIÓN
+        </button>
+      </form>
+
+      <div class="mt-10 text-center">
+        <p class="text-xs font-medium text-zinc-600 dark:text-zinc-400">
+          ¿Aún no tienes cuenta?
+          <a href="{{ url_for('auth.register') }}" class="font-black text-blue-600 dark:text-blue-400 hover:underline underline-offset-4 decoration-2">REGÍSTRATE</a>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const darkIcon = document.getElementById("theme-toggle-dark-icon");
+      const lightIcon = document.getElementById("theme-toggle-light-icon");
+      const btn = document.getElementById("theme-toggle");
+
+      // Estado inicial correcto: solo muestra un icono
+      const isDark = document.documentElement.classList.contains("dark");
+      darkIcon.classList.toggle("hidden", isDark);
+      lightIcon.classList.toggle("hidden", !isDark);
+
+      btn.addEventListener("click", function () {
+        const nowDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", nowDark ? "dark" : "light");
+        darkIcon.classList.toggle("hidden", nowDark);
+        lightIcon.classList.toggle("hidden", !nowDark);
+      });
+    </script>
+  </body>
 </html>
