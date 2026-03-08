@@ -8,7 +8,7 @@ def seed_database():
     with app.app_context():
         # Seccion Usuarios
         users_data = [
-            {"username": "fer", "password": "12345678", "role": "admin"},
+            {"username": "admin", "password": "12345678", "role": "admin"},
             {"username": "user", "password": "12345678", "role": "user"}
         ]
 
