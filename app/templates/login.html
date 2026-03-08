@@ -1,18 +1,37 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="light">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Venta Electrónicos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 min-h-screen flex items-center justify-center p-4 antialiased">
 
-    <div class="login-container">
-        <h2>Iniciar Sesión</h2>
-        <form method="POST">
-            <input type="text" name="username" placeholder="Usuario" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
-            <button type="submit">Ingresar</button>
+    <div class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-sm p-8">
+        <div class="flex flex-col space-y-1.5 mb-6 text-center">
+            <div class="w-12 h-12 bg-zinc-900 dark:bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-2">
+                <i class="fas fa-bolt text-xl text-zinc-50 dark:text-zinc-900"></i>
+            </div>
+            <h3 class="font-semibold tracking-tight text-2xl">Bienvenido</h3>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Ingresa tus credenciales para continuar</p>
+        </div>
+
+        <form method="POST" class="space-y-4">
+            <div class="space-y-2">
+                <label for="username" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Usuario</label>
+                <input type="text" name="username" id="username" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-300 disabled:cursor-not-allowed disabled:opacity-50">
+            </div>
+            
+            <div class="space-y-2">
+                <label for="password" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Contraseña</label>
+                <input type="password" name="password" id="password" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-300 disabled:cursor-not-allowed disabled:opacity-50">
+            </div>
+
+            <button type="submit" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 disabled:pointer-events-none disabled:opacity-50 bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2 w-full mt-2">
+                Iniciar Sesión
+            </button>
         </form>
     </div>
 

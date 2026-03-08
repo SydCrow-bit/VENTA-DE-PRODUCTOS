@@ -3,90 +3,97 @@
 {% block title %}Historial de Compras{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 style="margin-bottom: 20px;">Historial de Compras</h2>
+<div class="flex flex-col gap-6">
+    <div>
+        <h2 class="text-2xl font-semibold tracking-tight">Historial de Compras</h2>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Revisa los registros de transacciones y genera facturas.</p>
+    </div>
     
-    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
-        <form method="GET" action="{{ url_for('ventas.historial') }}" style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm">
+        <form method="GET" action="{{ url_for('ventas.historial') }}" class="flex flex-wrap items-end gap-4">
             
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-                <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">No. Pedido</label>
-                <input type="number" name="pedido_id" value="{{ filtros.pedido_id }}" placeholder="Ej. 15" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100px;">
+            <div class="space-y-2">
+                <label class="text-sm font-medium leading-none">No. Pedido</label>
+                <input type="number" name="pedido_id" value="{{ filtros.pedido_id }}" placeholder="Ej. 15" class="flex h-10 w-32 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300">
             </div>
             
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-                <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Desde la fecha</label>
-                <input type="date" name="fecha_inicio" value="{{ filtros.fecha_inicio }}" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <div class="space-y-2">
+                <label class="text-sm font-medium leading-none">Desde la fecha</label>
+                <input type="date" name="fecha_inicio" value="{{ filtros.fecha_inicio }}" class="flex h-10 w-auto rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300 dark:[color-scheme:dark]">
             </div>
             
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-                <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Hasta la fecha</label>
-                <input type="date" name="fecha_fin" value="{{ filtros.fecha_fin }}" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <div class="space-y-2">
+                <label class="text-sm font-medium leading-none">Hasta la fecha</label>
+                <input type="date" name="fecha_fin" value="{{ filtros.fecha_fin }}" class="flex h-10 w-auto rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300 dark:[color-scheme:dark]">
             </div>
 
             {% if current_user.role == 'admin' %}
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-                <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Comprador</label>
-                <input type="text" name="comprador" value="{{ filtros.comprador }}" placeholder="Nombre de usuario" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+            <div class="space-y-2">
+                <label class="text-sm font-medium leading-none">Comprador</label>
+                <input type="text" name="comprador" value="{{ filtros.comprador }}" placeholder="Usuario" class="flex h-10 w-48 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300">
             </div>
             {% endif %}
 
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn-save" style="padding: 9px 20px;">
-                    <i class="fas fa-search"></i> Filtrar
+            <div class="flex gap-2 ml-auto">
+                <button type="submit" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2">
+                    <i class="fas fa-search mr-2"></i> Filtrar
                 </button>
-                <a href="{{ url_for('ventas.historial') }}" class="btn-cancel" style="padding: 9px 20px; background: #f1f5f9; border-radius: 6px; text-decoration: none; color: #475569; display: flex; align-items: center; gap: 5px;">
-                    <i class="fas fa-eraser"></i> Limpiar
+                <a href="{{ url_for('ventas.historial') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-10 px-4 py-2">
+                    Limpiar
                 </a>
             </div>
         </form>
     </div>
     
-    <div class="table-responsive">
-        <table class="custom-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="border-bottom: 2px solid #f1f5f9;">
-                    <th style="text-align: left; padding: 12px;">Pedido</th>
-                    <th style="text-align: left; padding: 12px;">Fecha y Hora</th>
-                    <th style="text-align: left; padding: 12px;">Comprador</th>
-                    <th style="text-align: left; padding: 12px;">Artículos</th>
-                    <th style="text-align: right; padding: 12px;">Total Pagado</th>
-                    <th style="text-align: center; padding: 12px;">Factura</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for venta in ventas %}
-                <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 12px; font-weight: bold;">#{{ venta.id }}</td>
-                    <td style="padding: 12px; color: #64748b;">{{ venta.fecha.strftime('%d-%m-%Y %H:%M') }}</td>
-                    <td style="padding: 12px;">
-                        <span class="badge badge-usuario">{{ venta.usuario.username }}</span>
-                    </td>
-                    <td style="padding: 12px;">
-                        <ul style="margin: 0; padding-left: 20px; font-size: 0.9rem; color: #475569;">
-                            {% for detalle in venta.detalles %}
-                                <li>{{ detalle.cantidad }}x {{ detalle.producto.nombre }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td style="padding: 12px; text-align: right; font-weight: bold; color: #3b82f6;">
-                        {{ venta.total | round(2) }} Bs.
-                    </td>
-                    <td style="padding: 12px; text-align: center;">
-                        <a href="{{ url_for('ventas.recibo', venta_id=venta.id) }}" target="_blank" class="btn-save" style="background-color: #ef4444; padding: 8px 15px; text-decoration: none; font-size: 0.9rem;">
-                            <i class="fas fa-file-pdf"></i> PDF
-                        </a>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
-                        No se encontraron compras que coincidan con los filtros.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm overflow-hidden">
+        <div class="w-full overflow-auto">
+            <table class="w-full caption-bottom text-sm">
+                <thead class="[&_tr]:border-b [&_tr]:border-zinc-200 dark:[&_tr]:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+                    <tr class="border-b transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50">
+                        <th class="h-12 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">Pedido</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">Fecha y Hora</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">Comprador</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">Artículos</th>
+                        <th class="h-12 px-4 text-right align-middle font-medium text-zinc-500 dark:text-zinc-400">Total Pagado</th>
+                        <th class="h-12 px-4 text-center align-middle font-medium text-zinc-500 dark:text-zinc-400">Documento</th>
+                    </tr>
+                </thead>
+                <tbody class="[&_tr:last-child]:border-0">
+                    {% for venta in ventas %}
+                    <tr class="border-b border-zinc-200 dark:border-zinc-800 transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50">
+                        <td class="p-4 align-middle font-bold">#{{ venta.id }}</td>
+                        <td class="p-4 align-middle text-zinc-500 dark:text-zinc-400">{{ venta.fecha.strftime('%d-%m-%Y %H:%M') }}</td>
+                        <td class="p-4 align-middle">
+                            <span class="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-800 px-2.5 py-0.5 text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
+                                {{ venta.usuario.username }}
+                            </span>
+                        </td>
+                        <td class="p-4 align-middle">
+                            <ul class="list-disc pl-4 text-zinc-500 dark:text-zinc-400 text-xs">
+                                {% for detalle in venta.detalles %}
+                                    <li>{{ detalle.cantidad }}x {{ detalle.producto.nombre }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td class="p-4 align-middle text-right font-bold text-blue-600 dark:text-blue-400">
+                            {{ venta.total | round(2) }} Bs.
+                        </td>
+                        <td class="p-4 align-middle text-center">
+                            <a href="{{ url_for('ventas.recibo', venta_id=venta.id) }}" target="_blank" class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-red-50 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-950/30 dark:hover:text-red-400 dark:hover:border-red-900 h-8 px-3">
+                                <i class="fas fa-file-pdf mr-1"></i> PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-zinc-500 dark:text-zinc-400">
+                            No se encontraron compras que coincidan con los filtros.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -3,52 +3,65 @@
 {% block title %}Catálogo de Productos{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Catálogo de Productos</h2>
-        <a href="{{ url_for('ventas.carrito') }}" class="btn-save" style="background-color: #10b981; text-decoration: none; position: relative; display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-shopping-cart"></i> Ir al Carrito 
-            <span id="carrito-count" style="background: white; color: #10b981; padding: 2px 8px; border-radius: 12px; font-weight: bold; font-size: 0.9rem;">0</span>
+<div class="flex flex-col gap-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-2xl font-semibold tracking-tight">Catálogo de Productos</h2>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Encuentra los mejores electrónicos al mejor precio.</p>
+        </div>
+        <a href="{{ url_for('ventas.carrito') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2 gap-2 shadow-sm">
+            <i class="fas fa-shopping-cart"></i> Carrito 
+            <span id="carrito-count" class="bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 rounded-full px-2 py-0.5 text-xs font-bold ml-1">0</span>
         </a>
     </div>
 
-    <div class="cards-grid" id="catalogo-productos">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="catalogo-productos">
         {% for prod in productos %}
-        <div class="card" style="position: relative; display: flex; flex-direction: column;">
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 shadow-sm overflow-hidden flex flex-col group relative">
             
-            {% if prod.stock > 0 %}
-                <span style="position: absolute; top: 10px; right: 10px; background-color: #10b981; color: white; padding: 5px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; z-index: 10;">Disponible</span>
-            {% else %}
-                <span style="position: absolute; top: 10px; right: 10px; background-color: #ef4444; color: white; padding: 5px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; z-index: 10;">Sin Stock</span>
-            {% endif %}
-
-            {% if prod.imagen %}
-            <img src="{{ prod.imagen }}" alt="{{ prod.nombre }}" style="width:100%; height:200px; object-fit:cover; border-radius:8px; margin-bottom:15px;">
-            {% endif %}
-            
-            <h3 style="margin-top: 0;">{{ prod.nombre }}</h3>
-            <p style="color: #64748b; font-size: 0.9rem; height: 40px; overflow: hidden; margin-bottom: 10px;">{{ prod.descripcion }}</p>
-            <p style="font-size: 1.4rem; color: #3b82f6; font-weight: bold; margin: 5px 0;">{{ prod.precio }} Bs.</p>
-            <p style="font-size: 0.9rem; color: #475569; margin-bottom: 15px;">Stock: <strong>{{ prod.stock }}</strong> unidades</p>
-            
-            <div style="margin-top: auto;">
+            <div class="absolute top-3 right-3 z-10">
                 {% if prod.stock > 0 %}
-                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
-                    <label for="cantidad-{{ prod.id }}" style="font-size: 0.9rem; color: #475569; font-weight: bold;">Cant:</label>
-                    <input type="number" id="cantidad-{{ prod.id }}" value="1" min="1" max="{{ prod.stock }}" style="width: 70px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center;">
+                    <span class="inline-flex items-center rounded-full border border-transparent bg-zinc-900 dark:bg-zinc-100 text-zinc-50 dark:text-zinc-900 px-2.5 py-0.5 text-xs font-semibold shadow-sm">Disponible</span>
+                {% else %}
+                    <span class="inline-flex items-center rounded-full border border-transparent bg-red-500 text-zinc-50 px-2.5 py-0.5 text-xs font-semibold shadow-sm">Agotado</span>
+                {% endif %}
+            </div>
+
+            <div class="h-48 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                {% if prod.imagen %}
+                <img src="{{ prod.imagen }}" alt="{{ prod.nombre }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center text-zinc-400"><i class="fas fa-image text-4xl"></i></div>
+                {% endif %}
+            </div>
+            
+            <div class="p-5 flex flex-col flex-1">
+                <h3 class="font-semibold leading-none tracking-tight mb-2">{{ prod.nombre }}</h3>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2 mb-4 flex-1">{{ prod.descripcion }}</p>
+                
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-lg font-bold">{{ prod.precio }} Bs.</span>
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400">Stock: {{ prod.stock }}</span>
                 </div>
-                <button class="btn-save" style="width: 100%; transition: all 0.3s ease;" onclick='agregarAlCarritoDesdeCatalogo(event, {{ prod.id }}, {{ prod.nombre | tojson }}, {{ prod.precio }}, {{ prod.stock }})'>
-                    <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                
+                {% if prod.stock > 0 %}
+                <div class="flex items-center gap-3 mb-4">
+                    <label for="cantidad-{{ prod.id }}" class="text-sm font-medium">Cant.</label>
+                    <input type="number" id="cantidad-{{ prod.id }}" value="1" min="1" max="{{ prod.stock }}" class="flex h-9 w-20 rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-300">
+                </div>
+                <button class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-9 px-4 py-2" onclick='agregarAlCarritoDesdeCatalogo(event, {{ prod.id }}, {{ prod.nombre | tojson }}, {{ prod.precio }}, {{ prod.stock }})'>
+                    <i class="fas fa-plus mr-2"></i> Agregar
                 </button>
                 {% else %}
-                <button class="btn-save" style="width: 100%; background-color: #94a3b8; cursor: not-allowed;" disabled>
-                    Agotado
+                <button disabled class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500 h-9 px-4 py-2 cursor-not-allowed mt-auto">
+                    Sin Stock
                 </button>
                 {% endif %}
             </div>
         </div>
         {% else %}
-        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: white; border-radius: 8px;">
+        <div class="col-span-full flex flex-col items-center justify-center p-8 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 text-zinc-500">
+            <i class="fas fa-box-open text-4xl mb-3"></i>
             <p>No hay productos disponibles en este momento.</p>
         </div>
         {% endfor %}

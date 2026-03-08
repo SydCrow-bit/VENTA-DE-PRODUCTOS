@@ -3,38 +3,38 @@
 {% block title %}Crear Usuario - Panel Admin{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <div class="form-card">
-        <div class="form-header">
-            <i class="fas fa-user-plus"></i>
-            <h1>Crear Nuevo Usuario</h1>
-            <p>Ingresa los datos para registrar un nuevo acceso al sistema.</p>
+<div class="flex items-center justify-center py-10">
+    <div class="w-full max-w-md rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-8 shadow-sm">
+        <div class="flex flex-col space-y-1.5 mb-6 text-center">
+            <i class="fas fa-user-plus text-3xl text-zinc-900 dark:text-zinc-50 mb-2"></i>
+            <h3 class="font-semibold tracking-tight text-2xl">Crear Nuevo Usuario</h3>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Ingresa los datos para registrar un nuevo acceso.</p>
         </div>
 
-        <form method="POST" class="styled-form">
-            <div class="form-group">
-                <label for="username"><i class="fas fa-user"></i> Nombre de Usuario</label>
-                <input type="text" id="username" name="username" placeholder="Ej: kcopali" required>
+        <form method="POST" class="space-y-4">
+            <div class="space-y-2">
+                <label for="username" class="text-sm font-medium leading-none">Nombre de Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Ej: admin123" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300">
             </div>
 
-            <div class="form-group">
-                <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            <div class="space-y-2">
+                <label for="password" class="text-sm font-medium leading-none">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300">
             </div>
 
-            <div class="form-group">
-                <label for="role"><i class="fas fa-user-tag"></i> Asignar Rol</label>
-                <select id="role" name="role">
-                    <option value="usuario">Usuario Estándar</option>
+            <div class="space-y-2">
+                <label for="role" class="text-sm font-medium leading-none">Asignar Rol</label>
+                <select id="role" name="role" class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300 [&>option]:text-zinc-950">
+                    <option value="user">Usuario Estándar</option>
                     <option value="admin">Administrador</option>
                 </select>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn-save">
-                    <i class="fas fa-check"></i> Guardar Usuario
+            <div class="flex flex-col gap-2 pt-4">
+                <button type="submit" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2">
+                    Guardar Usuario
                 </button>
-                <a href="{{ url_for('admin.usuarios') }}" class="btn-cancel">
+                <a href="{{ url_for('admin.usuarios') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-10 px-4 py-2">
                     Cancelar
                 </a>
             </div>

@@ -3,36 +3,83 @@
 {% block title %}Mi Carrito{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Mi Carrito de Compras</h2>
+<div class="flex flex-col gap-6">
+    <div>
+        <h2 class="text-2xl font-semibold tracking-tight">Mi Carrito de Compras</h2>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400">Revisa tus productos antes de finalizar la compra.</p>
+    </div>
     
-    <div class="table-responsive" style="margin-top: 20px;">
-        <table class="custom-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="border-bottom: 2px solid #f1f5f9;">
-                    <th style="text-align: left; padding: 12px;">Producto</th>
-                    <th style="text-align: right; padding: 12px;">Precio Unit.</th>
-                    <th style="text-align: center; padding: 12px;">Cantidad</th>
-                    <th style="text-align: right; padding: 12px;">Subtotal</th>
-                    <th style="text-align: center; padding: 12px;">Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="carrito-body">
-            </tbody>
-        </table>
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm overflow-hidden">
+        <div class="w-full overflow-auto">
+            <table class="w-full caption-bottom text-sm">
+                <thead class="[&_tr]:border-b [&_tr]:border-zinc-200 dark:[&_tr]:border-zinc-800">
+                    <tr class="border-b transition-colors hover:bg-zinc-100/50 data-[state=selected]:bg-zinc-100 dark:hover:bg-zinc-800/50">
+                        <th class="h-12 px-4 text-left align-middle font-medium text-zinc-500 dark:text-zinc-400">Producto</th>
+                        <th class="h-12 px-4 text-right align-middle font-medium text-zinc-500 dark:text-zinc-400">Precio Unit.</th>
+                        <th class="h-12 px-4 text-center align-middle font-medium text-zinc-500 dark:text-zinc-400">Cantidad</th>
+                        <th class="h-12 px-4 text-right align-middle font-medium text-zinc-500 dark:text-zinc-400">Subtotal</th>
+                        <th class="h-12 px-4 text-center align-middle font-medium text-zinc-500 dark:text-zinc-400">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="carrito-body" class="[&_tr:last-child]:border-0">
+                    </tbody>
+            </table>
+        </div>
     </div>
 
-    <div style="margin-top: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
-        <a href="{{ url_for('ventas.catalogo') }}" class="btn-cancel" style="padding: 10px 20px; background: #f1f5f9; border-radius: 8px;">Seguir Comprando</a>
-        <div style="text-align: right;">
-            <h3 style="margin: 0 0 15px 0; color: #1e293b;">Total: <span id="carrito-total" style="color: #3b82f6;">0.00</span> Bs.</h3>
-            <button class="btn-save" onclick="procesarCompra()" style="padding: 12px 30px; font-size: 1.1rem;">Finalizar Compra</button>
+    <div class="flex flex-col sm:flex-row items-center justify-between rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm">
+        <a href="{{ url_for('ventas.catalogo') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-10 px-4 py-2 mb-4 sm:mb-0">
+            Seguir Comprando
+        </a>
+        <div class="flex items-center gap-6">
+            <div class="text-right">
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">Total a pagar</p>
+                <h3 class="text-2xl font-bold tracking-tight"><span id="carrito-total" class="text-blue-600 dark:text-blue-400">0.00</span> Bs.</h3>
+            </div>
+            <button onclick="procesarCompra()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-6 py-2">
+                Finalizar Compra
+            </button>
         </div>
     </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", renderizarCarrito);
+    // Sobrescribimos ligeramente la función de renderizar para usar clases de Tailwind en las filas generadas
+    document.addEventListener("DOMContentLoaded", function() {
+        const renderizarCarritoOriginal = renderizarCarrito;
+        renderizarCarrito = function() {
+            const tbody = document.getElementById('carrito-body');
+            const totalElement = document.getElementById('carrito-total');
+            if (!tbody || !totalElement) return;
+            tbody.innerHTML = '';
+            let total = 0;
+            if (carrito.length === 0) {
+                tbody.innerHTML = '<tr class="border-b border-zinc-200 dark:border-zinc-800"><td colspan="5" class="p-4 text-center text-zinc-500">El carrito está vacío</td></tr>';
+                totalElement.innerText = "0.00";
+                return;
+            }
+            carrito.forEach(item => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-zinc-200 dark:border-zinc-800 transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50";
+                tr.innerHTML = `
+                    <td class="p-4 align-middle font-medium">${item.nombre}</td>
+                    <td class="p-4 align-middle text-right">${item.precio.toFixed(2)} Bs.</td>
+                    <td class="p-4 align-middle text-center">${item.cantidad}</td>
+                    <td class="p-4 align-middle text-right font-bold">${subtotal.toFixed(2)} Bs.</td>
+                    <td class="p-4 align-middle text-center">
+                        <button onclick="eliminarDelCarrito(${item.product_id})" class="inline-flex items-center justify-center rounded-md text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 h-8 px-3 transition-colors">
+                            Quitar
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            totalElement.innerText = total.toFixed(2);
+        };
+        renderizarCarrito();
+    });
 </script>
 {% endblock %}
