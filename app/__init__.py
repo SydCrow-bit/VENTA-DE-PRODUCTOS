@@ -22,6 +22,7 @@ def create_app():
     from .inicio import inicio_bp
     from .routes import routes_bp
     from .ventas import ventas_bp
+    from .chat import chat_bp
 
     # registrar blueprints
     app.register_blueprint(auth_bp)
@@ -29,4 +30,5 @@ def create_app():
     app.register_blueprint(inicio_bp)
     app.register_blueprint(routes_bp)
     app.register_blueprint(ventas_bp)
+    app.register_blueprint(chat_bp)
     return app
