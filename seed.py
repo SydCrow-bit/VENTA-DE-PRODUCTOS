@@ -16,12 +16,14 @@ def seed_database():
         db.session.commit()
 
         users_data = [
-            {"username": "admin", "password": "password123", "role": "admin"},
-            {"username": "carlos_cliente", "password": "password123", "role": "user"},
-            {"username": "maria_tech", "password": "password123", "role": "user"},
-            {"username": "juan_gamer", "password": "password123", "role": "user"},
-            {"username": "ana_dev", "password": "password123", "role": "user"},
-            {"username": "luis_compras", "password": "password123", "role": "user"}
+            {"username": "admin", "password": "12345678", "role": "admin"},
+            {"username": "fer", "password": "12345678", "role": "admin"},
+            {"username": "user", "password": "12345678", "role": "user"},
+            {"username": "carlos", "password": "12345678", "role": "user"},
+            {"username": "maria", "password": "12345678", "role": "user"},
+            {"username": "juan", "password": "12345678", "role": "user"},
+            {"username": "ana_dev", "password": "12345678", "role": "user"},
+            {"username": "luis", "password": "12345678", "role": "user"}
         ]
 
         users = []
