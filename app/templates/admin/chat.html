@@ -1,30 +1,142 @@
 {% extends "base.html" %}
 
-{% block title %}Nueva Categoría{% endblock %}
+{% block title %}Chatbot IA - Beaver{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center py-10">
-    <div class="w-full max-w-md rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-8 shadow-sm">
-        <div class="flex flex-col space-y-1.5 mb-6">
-            <h3 class="font-semibold tracking-tight text-2xl">Crear Nueva Categoría</h3>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Ingresa el nombre de la nueva clasificación.</p>
+<div class="flex flex-col h-[calc(100vh-8rem)] max-w-5xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Asistente Inteligente</h1>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">Consulta stock, ventas y recomendaciones con Beaver IA</p>
         </div>
+        <div class="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+            En línea
+        </div>
+    </div>
 
-        <form action="{{ url_for('routes.crear_categoria') }}" method="POST" class="space-y-4">
-            <div class="space-y-2">
-                <label for="nombre" class="text-sm font-medium leading-none">Nombre de la Categoría</label>
-                <input type="text" name="nombre" id="nombre" placeholder="Ej. Laptops, Celulares" required class="flex h-10 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-transparent px-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-950 dark:focus:ring-zinc-300">
+    <div id="chat-messages" class="flex-1 overflow-y-auto space-y-6 mb-6 pr-4 custom-scrollbar">
+        <div class="flex gap-4 w-full max-w-3xl">
+            <div class="w-8 h-8 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 flex-shrink-0 flex items-center justify-center">
+                <i class="fas fa-robot text-xs"></i>
             </div>
+            <div class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-5 py-3.5 rounded-2xl text-sm leading-relaxed text-zinc-800 dark:text-zinc-200">
+                ¡Hola Edwin! Soy **Beaver**, tu asistente de IA. Puedo ayudarte a revisar el stock de placas base, analizar tus ventas de la semana o recomendarte configuraciones de PC. ¿En qué puedo ayudarte hoy?
+            </div>
+        </div>
+    </div>
 
-            <div class="flex flex-col gap-2 pt-4">
-                <button type="submit" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 h-10 px-4 py-2">
-                    Guardar Categoría
-                </button>
-                <a href="{{ url_for('routes.lista_categorias') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 h-10 px-4 py-2">
-                    Cancelar
-                </a>
-            </div>
+    <div class="relative max-w-3xl mx-auto w-full">
+        <form id="chat-form" class="relative">
+            <textarea id="user-input" 
+                rows="1"
+                class="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl pl-5 pr-12 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:focus:ring-zinc-400 resize-none shadow-sm dark:text-zinc-100"
+                placeholder="Escribe tu consulta aquí..."></textarea>
+            <button type="submit" 
+                class="absolute right-2.5 bottom-2.5 w-9 h-9 flex items-center justify-center bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                id="send-btn">
+                <i class="fas fa-arrow-up text-xs"></i>
+            </button>
         </form>
+        <p class="text-[10px] text-center text-zinc-400 mt-2">Beaver puede cometer errores. Verifica la información importante.</p>
     </div>
 </div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+</style>
+
+<script>
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const sendBtn = document.getElementById('send-btn');
+
+    // Auto-ajuste de la altura del textarea
+    userInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    function formatText(text) {
+        // Formato básico para negritas y saltos de línea
+        return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    }
+
+    function appendMessage(role, text) {
+        const div = document.createElement('div');
+        div.className = `flex gap-4 w-full ${role === 'user' ? 'justify-end' : 'max-w-3xl'}`;
+        
+        const iconClass = role === 'user' 
+            ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 fa-user' 
+            : 'bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 fa-robot';
+
+        const bubbleClass = role === 'user'
+            ? 'bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 rounded-2xl rounded-tr-none'
+            : 'bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-2xl rounded-tl-none';
+
+        div.innerHTML = `
+            ${role === 'ai' ? `<div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${iconClass.split(' ')[0]}"><i class="fas fa-robot text-xs"></i></div>` : ''}
+            <div class="${bubbleClass} px-5 py-3.5 text-sm leading-relaxed max-w-[85%]">
+                ${formatText(text)}
+            </div>
+            ${role === 'user' ? `<div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center bg-zinc-200 dark:bg-zinc-800"><i class="fas fa-user text-xs"></i></div>` : ''}
+        `;
+
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTyping() {
+        const div = document.createElement('div');
+        div.id = 'typing-indicator';
+        div.className = 'flex gap-4 w-full max-w-3xl';
+        div.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-zinc-900 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-900 flex-shrink-0 flex items-center justify-center">
+                <i class="fas fa-robot text-xs"></i>
+            </div>
+            <div class="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl px-5 py-4 flex items-center gap-1.5 w-24">
+                <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></div>
+                <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay: 0.15s"></div>
+                <div class="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+            </div>
+        `;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        appendMessage('user', message);
+        userInput.value = '';
+        userInput.style.height = 'auto';
+        
+        showTyping();
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+
+            const data = await response.json();
+            document.getElementById('typing-indicator').remove();
+            
+            if (data.response) {
+                appendMessage('ai', data.response);
+            } else {
+                appendMessage('ai', 'Lo siento, hubo un problema al procesar tu consulta.');
+            }
+        } catch (error) {
+            document.getElementById('typing-indicator').remove();
+            appendMessage('ai', 'Error de conexión con el servidor.');
+        }
+    });
+</script>
 {% endblock %}
