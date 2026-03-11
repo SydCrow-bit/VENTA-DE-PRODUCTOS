@@ -147,3 +147,16 @@ def eliminar_usuario(id):
     flash(f"Usuario '{nombre}' eliminado correctamente", "success")
 
     return redirect(url_for("admin.usuarios"))
+
+# =========================
+# INTEGRACIÓN DE CHAT BOT
+# =========================
+
+@admin_bp.route("/chat")
+@login_required
+@admin_required
+@referrer_required
+def chat():
+    return render_template("admin/chat.html")
+
+#-----------------------------------------
