@@ -1,15 +1,26 @@
 import os
 import traceback
+import logging
 from flask import Blueprint, request, jsonify
 from flask_login import current_user, login_required
 from sqlalchemy import or_
 from google import genai
 from google.genai import types
 from app.models import Product, Category, Venta, DetalleVenta
+from config import Config
+
+
+# --- CONFIGURACIÓN DE LOGS ---
+# force=True obliga a Flask a escribir en este archivo en lugar de la consola
+logging.basicConfig(
+    filename='chatbot_debug.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    encoding='utf-8',
+    force=True 
+)
 
 chat_bp = Blueprint('chat', __name__, url_prefix='/api/chat')
-
-GEMINI_API_KEY = "api_key"
 
 GEMINI_MODELS = [
     "gemini-2.5-flash",
@@ -17,7 +28,7 @@ GEMINI_MODELS = [
     "gemini-2.5-flash-lite"
 ]
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+client = genai.Client(api_key=Config.GEMINI_API_KEY)
 
 def call_gemini_with_fallback(contents, config):
     last_error = None
@@ -48,6 +59,8 @@ def generate_chat_response():
 
     if not user_message:
         return jsonify({'error': 'Mensaje vacío'}), 400
+
+    logging.info(f"Usuario: {current_user.username} | Mensaje: {user_message}")
 
     def buscar_inventario(termino_busqueda: str = "") -> dict:
         try:
@@ -134,44 +147,24 @@ def generate_chat_response():
     config = types.GenerateContentConfig(
         system_instruction=system_instruction,
         temperature=0.3,
-        max_output_tokens=800,
+        max_output_tokens=2048, # AUMENTADO para que no se corten los presupuestos largos
         tools=[buscar_inventario, resumen_mis_compras]
     )
 
     try:
         response = call_gemini_with_fallback(contents, config)
-
-        if response.function_calls:
-            contents.append(response.candidates[0].content)
-            
-            function_response_parts = []
-            for function_call in response.function_calls:
-                name = function_call.name
-                args = dict(function_call.args) if function_call.args else {}
-                
-                if name == "buscar_inventario":
-                    res = buscar_inventario(args.get("termino_busqueda", ""))
-                elif name == "resumen_mis_compras":
-                    res = resumen_mis_compras(args.get("solicitar", True))
-                else:
-                    res = {"error": "Función desconocida."}
-                    
-                function_response_parts.append(
-                    types.Part.from_function_response(
-                        name=name,
-                        response=res
-                    )
-                )
-                
-            contents.append(types.Content(role="user", parts=function_response_parts))
-            
-            final_response = call_gemini_with_fallback(contents, config)
-            return jsonify({'response': final_response.text.strip()})
         
-        return jsonify({'response': response.text.strip()})
+        texto_final = response.text.strip()
+        
+        logging.info(f"Respuesta final IA: \n{texto_final}\n{'-'*40}")
+        
+        return jsonify({'response': texto_final})
 
     except Exception as e:
         error_details = traceback.format_exc()
         print(f"Error CRÍTICO:\n{error_details}")
+        
+        logging.error(f"Error CRÍTICO procesando el chat: {error_details}\n{'-'*40}")
+        
         mensaje_error = str(e).replace("API key not valid", "Tu API Key no es válida o faltó reemplazarla.")
         return jsonify({'error': f'Detalle del error: {mensaje_error}'}), 500
