@@ -140,7 +140,31 @@ def generate_chat_response():
 
         except Exception as e:
             return {"error":str(e)}
+    
+    def productos_bajo_stock() -> dict:
+        try:
 
+            productos = Product.query.filter(
+                Product.stock <= 5
+            ).all()
+
+            if not productos:
+                return {"mensaje":"No hay productos con bajo stock"}
+
+            data=[]
+
+            for p in productos:
+
+                data.append({
+                    "nombre":p.nombre,
+                    "stock":p.stock
+                })
+
+            return {"productos_bajo_stock":data}
+
+        except Exception as e:
+            return {"error":str(e)}
+        
     rol_usuario = "Administrador" if current_user.role == 'admin' else "Cliente"
     
     system_instruction = f"""Eres 'Beaver', el experto en hardware de PC de 'Venta Electrónicos S.R.L.'.
@@ -168,7 +192,7 @@ def generate_chat_response():
         system_instruction=system_instruction,
         temperature=0.3,
         max_output_tokens=2048, # AUMENTADO para que no se corten los presupuestos largos
-        tools=[buscar_inventario, resumen_mis_compras, ventas_hoy]
+        tools=[buscar_inventario, resumen_mis_compras, ventas_hoy, productos_bajo_stock]
     )
 
     try:
