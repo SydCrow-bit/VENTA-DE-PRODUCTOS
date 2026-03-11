@@ -10,7 +10,7 @@ Flask-Login==0.6.3
 Flask-Migrate==4.1.0
 Flask-SQLAlchemy==3.1.1
 Flask-WTF==1.2.2
-fpdf==1.7.2
+fpdf2==2.7.9
 greenlet==3.3.2
 idna==3.11
 itsdangerous==2.2.0
@@ -25,3 +25,4 @@ typing_extensions==4.15.0
 Werkzeug==3.1.6
 WTForms==3.2.1
 google-genai==1.16.0
+python-dotenv==1.0.1
