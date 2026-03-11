@@ -120,6 +120,26 @@ def generate_chat_response():
             return {"ultimas_compras": resultados}
         except Exception as e:
             return {"error": f"Error de base de datos al leer compras: {str(e)}"}
+        
+    #METODOS PARA CHATBOT PARA ADMIS
+    def ventas_hoy() -> dict:
+        try:
+
+            from datetime import date
+
+            ventas = Venta.query.filter(
+                Venta.fecha >= date.today()
+            ).all()
+
+            total = sum(v.total for v in ventas)
+
+            return {
+                "ventas_hoy": len(ventas),
+                "ingresos": float(total)
+            }
+
+        except Exception as e:
+            return {"error":str(e)}
 
     rol_usuario = "Administrador" if current_user.role == 'admin' else "Cliente"
     
@@ -148,7 +168,7 @@ def generate_chat_response():
         system_instruction=system_instruction,
         temperature=0.3,
         max_output_tokens=2048, # AUMENTADO para que no se corten los presupuestos largos
-        tools=[buscar_inventario, resumen_mis_compras]
+        tools=[buscar_inventario, resumen_mis_compras, ventas_hoy]
     )
 
     try:
