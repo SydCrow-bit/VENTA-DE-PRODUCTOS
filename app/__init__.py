@@ -3,6 +3,7 @@ from .extensions import db, login_manager, migrate
 from config import Config
 from .models import User
 
+
 def create_app():
     app = Flask(__name__)
 
@@ -23,6 +24,7 @@ def create_app():
     from .routes import routes_bp
     from .ventas import ventas_bp
     from .chat import chat_bp
+    from .ai_dashboard import ai_dashboard_bp
 
     # registrar blueprints
     app.register_blueprint(auth_bp)
@@ -31,4 +33,5 @@ def create_app():
     app.register_blueprint(routes_bp)
     app.register_blueprint(ventas_bp)
     app.register_blueprint(chat_bp)
+    app.register_blueprint(ai_dashboard_bp)
     return app

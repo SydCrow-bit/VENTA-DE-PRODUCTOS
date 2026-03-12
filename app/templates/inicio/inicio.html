@@ -61,6 +61,92 @@
             </div>
         </div>
     </div>
+    <!-- DASHBOARD IA FULL WIDTH -->
+
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-sm w-full">
+
+    <h3 class="font-semibold tracking-tight mb-4">
+
+    AI Business Intelligence
+
+    </h3>
+
+    <div class="flex gap-3 mb-4">
+
+    <button
+    onclick="runAI()"
+    class="bg-indigo-600 text-white px-4 py-2 rounded-lg">
+
+    Analizar negocio
+
+    </button>
+
+    <button
+    onclick="runAIStock()"
+    class="bg-red-600 text-white px-4 py-2 rounded-lg">
+
+    Riesgo inventario
+
+    </button>
+
+    <button
+    onclick="runAISales()"
+    class="bg-green-600 text-white px-4 py-2 rounded-lg">
+
+    Insights ventas
+
+    </button>
+
+    </div>
+
+    <div id="ai-result"
+
+    class="mt-4 p-6 bg-zinc-100 dark:bg-zinc-900 rounded-lg text-sm leading-relaxed whitespace-pre-line max-h-[500px] overflow-y-auto"></div>
+
+    Presiona un botón IA
+
+    </div>
+
+    </div>
+        <script>
+
+        async function runAI(){
+
+        document.getElementById("ai-result").innerHTML=
+
+        "Beaver AI está analizando los datos, espere un momento por favor..."
+
+        const r=await fetch(
+
+        "/api/ai/analysis"
+
+        )
+
+        const data=await r.json()
+
+        document.getElementById(
+
+        "ai-result"
+
+        ).innerHTML=data.analysis
+
+        }
+        async function runAIStock(){
+            document.getElementById("ai-result").innerHTML = "Beaver AI está analizando el inventario..."
+            const r = await fetch("/api/ai/stock")
+            const data = await r.json()
+            document.getElementById("ai-result").innerHTML = data.analysis
+        }
+
+        async function runAISales(){
+            document.getElementById("ai-result").innerHTML = "Beaver AI está generando insights de ventas..."
+            const r = await fetch("/api/ai/sales")
+            const data = await r.json()
+            document.getElementById("ai-result").innerHTML = data.analysis
+        }
+
+        </script>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
