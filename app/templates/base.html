@@ -127,8 +127,9 @@
         </div>
     </main>
 
-
-
+{% if current_user.role == "user" %}
+{% include 'components/chatbot.html' %}
+{% endif %}
     <script>
         const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
         const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');

@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, render_template, request, jsonify, make_response
 from flask_login import login_required, current_user
 from fpdf import FPDF
@@ -15,7 +16,28 @@ def catalogo():
 @ventas_bp.route('/carrito')
 @login_required
 def carrito():
-    return render_template('ventas/carrito.html')
+    items_to_add = request.args.get('add')
+    productos_auto = []
+    
+    if items_to_add:
+        try:
+            pares = items_to_add.split(',')
+            for par in pares:
+                if '-' in par:
+                    pid, cant = par.split('-')
+                    prod = Product.query.get(int(pid))
+                    
+                    if prod and prod.stock >= int(cant):
+                        productos_auto.append({
+                            'product_id': prod.id,
+                            'nombre': prod.nombre,
+                            'precio': float(prod.precio),
+                            'cantidad': int(cant)
+                        })
+        except Exception:
+            pass
+
+    return render_template('ventas/carrito.html', productos_auto=json.dumps(productos_auto))
 
 @ventas_bp.route('/checkout', methods=['POST'])
 @login_required

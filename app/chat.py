@@ -193,20 +193,43 @@ def generate_chat_response():
 
         except Exception as e:
             return {"error":str(e)}
+    def generar_link_compra(productos_cotizados: list[str]) -> dict:
+        """
+        Llama a esta herramienta cuando el usuario acepte una cotización para generarle el link de compra.
+        'productos_cotizados' debe ser una lista de nombres de los productos exactos, ej: ["Ryzen 5 5600G", "Memoria RAM 8GB"]
+        """
+        try:
+            items_link = []
+            for nombre in productos_cotizados:
+                # Buscamos el producto en la BD por su nombre
+                prod = Product.query.filter(Product.nombre.ilike(f"%{nombre}%")).first()
+                if prod:
+                    # Asumimos cantidad 1 por defecto para simplificar
+                    items_link.append(f"{prod.id}-1")
+            
+            if not items_link:
+                return {"mensaje": "No pude generar el link porque no encontré los IDs exactos."}
+                
+            param = ",".join(items_link)
+            link_markdown = f"[¡Haz clic aquí para añadir esta cotización a tu carrito!](/ventas/carrito?add={param})"
+            return {"link_generado": link_markdown}
+        except Exception as e:
+            return {"error": f"Error al generar link: {str(e)}"}
         
     rol_usuario = "Administrador" if current_user.role == 'admin' else "Cliente"
     
-    system_instruction = f"""Eres 'Beaver', el experto en hardware de PC de 'Venta Electrónicos S.R.L.'.
-    Tu especialidad es armar presupuestos de computadoras verificando compatibilidades y buscando piezas en el inventario.
-    Estás interactuando con: {current_user.username} (Rol: {rol_usuario}).
+    system_instruction = f"""Eres 'Beaver', experto en hardware de 'Venta Electronicos S.R.L.'.
+    Usuario: {current_user.username} (Rol: {rol_usuario}).
     
     REGLAS ESTRICTAS:
-    1. IMPORTANTE SOBRE LA MONEDA: Todos los precios en la base de datos están en Bolivianos (Bs). NO hagas conversiones a dólares. 
-    2. SIEMPRE que te pidan armar una PC o presupuesto, llama a la herramienta 'buscar_inventario' enviando "".
-    3. Verifica compatibilidad (ej. procesador AMD con placa base AM4 o AM5 según corresponda, y DDR4 vs DDR5).
-    4. Si un usuario tiene poco presupuesto (ej. 4000 Bs - 5000 Bs), aconséjale usar procesadores con gráficos integrados (ej. Ryzen 5600G o 5700G) para ahorrar el costo de la tarjeta de video dedicada.
-    5. No inventes stock ni precios, solo usa la información de la base de datos.
-    6. Sé profesional, amigable y usa formato de viñetas para listar los componentes cotizados, mostrando el costo final de la PC."""
+    1. Precios en Bolivianos (Bs). NO conviertas a dolares.
+    2. Para armar PC o presupuesto, llama a 'buscar_inventario' con "".
+    3. Verifica compatibilidad estrictamente.
+    4. Presupuestos bajos (4000-5000 Bs): sugiere procesadores con graficos integrados.
+    5. Usa solo stock y precios de la base de datos.
+    6. Se directo, profesional y muy conciso. Usa vinetas. Evita textos largos para ahorrar tokens.
+    7. Actua como un cajero cerrando la venta. Tras dar la cotizacion, pregunta de forma directa si desea proceder con la compra.
+    8. Si el usuario acepta comprar, LLAMA a 'generar_link_compra' con la lista de nombres de los productos. Muestra el enlace generado al usuario."""
 
     formatted_history = []
     for msg in history_data[-6:]:
@@ -221,7 +244,7 @@ def generate_chat_response():
         system_instruction=system_instruction,
         temperature=0.3,
         max_output_tokens=2048, # AUMENTADO para que no se corten los presupuestos largos
-        tools=[buscar_inventario, resumen_mis_compras, ventas_hoy, productos_bajo_stock, productos_mas_vendidos]
+        tools=[buscar_inventario, resumen_mis_compras, ventas_hoy, productos_bajo_stock, productos_mas_vendidos, generar_link_compra]
     )
 
     try:
