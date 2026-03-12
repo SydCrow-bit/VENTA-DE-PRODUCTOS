@@ -203,6 +203,7 @@ Solo análisis en texto plano.
     except:
 
         return "Error generando análisis"
+
 # ==========================
 # ROUTE ANALISIS NEGOCIO
 # ==========================
@@ -242,3 +243,74 @@ def ai_analysis():
             "message":str(e)
 
         }),500
+# ==========================
+# RIESGO INVENTARIO
+# ==========================
+
+def obtener_riesgo_inventario():
+    productos = Product.query.all()
+    resultados = []
+
+    for p in productos:
+        # Si el stock es menor a 5 unidades, consideramos riesgo alto
+        riesgo = "Bajo"
+        if p.stock <= 5:
+            riesgo = "Alto"
+        elif p.stock <= 10:
+            riesgo = "Medio"
+
+        resultados.append(f"{p.nombre}: Stock {p.stock} unidades - Riesgo {riesgo}")
+
+    if not resultados:
+        resultados.append("No hay productos registrados")
+
+    return resultados
+
+
+def generar_riesgo_inventario(datos):
+    prompt = f"""
+Estos son los productos y su stock:
+{', '.join(datos)}
+
+Genera un análisis sobre los riesgos de inventario.
+Indica productos críticos y posibles acciones para mitigarlos.
+Escribe mínimo 3 párrafos, solo texto plano, sin markdown ni listas.
+"""
+
+    config = types.GenerateContentConfig(
+        temperature=0.7,
+        max_output_tokens=1200,
+        top_p=0.9
+    )
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
+        config=config
+    )
+
+    try:
+        texto = ""
+        for part in response.candidates[0].content.parts:
+            if hasattr(part, "text"):
+                texto += part.text
+        return limpiar_markdown(texto)
+    except:
+        return "Error generando análisis de inventario"
+
+@ai_dashboard_bp.route("/stock")
+@login_required
+def ai_stock():
+    try:
+        datos = obtener_riesgo_inventario()
+        analysis = generar_riesgo_inventario(datos)
+        return jsonify({
+            "status": "success",
+            "analysis": analysis,
+            "generated": datetime.now().strftime("%H:%M")
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500

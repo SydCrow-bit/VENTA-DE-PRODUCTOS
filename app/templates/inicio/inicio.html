@@ -131,6 +131,19 @@
         ).innerHTML=data.analysis
 
         }
+        async function runAIStock(){
+            document.getElementById("ai-result").innerHTML = "Beaver AI está analizando el inventario..."
+            const r = await fetch("/api/ai/stock")
+            const data = await r.json()
+            document.getElementById("ai-result").innerHTML = data.analysis
+        }
+
+        async function runAISales(){
+            document.getElementById("ai-result").innerHTML = "Beaver AI está generando insights de ventas..."
+            const r = await fetch("/api/ai/sales")
+            const data = await r.json()
+            document.getElementById("ai-result").innerHTML = data.analysis
+        }
 
         </script>
     </div>
