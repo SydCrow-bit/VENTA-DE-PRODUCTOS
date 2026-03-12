@@ -1,6 +1,7 @@
 import os
 import traceback
 import logging
+from .extensions import db
 from flask import Blueprint, request, jsonify
 from flask_login import current_user, login_required
 from sqlalchemy import or_
@@ -164,6 +165,34 @@ def generate_chat_response():
 
         except Exception as e:
             return {"error":str(e)}
+    def productos_mas_vendidos():
+        try:
+            from sqlalchemy import func
+
+            result = db.session.query(
+                DetalleVenta.product_id,
+                func.sum(DetalleVenta.cantidad)
+            ).group_by(
+                DetalleVenta.product_id
+            ).order_by(
+                func.sum(DetalleVenta.cantidad).desc()
+            ).limit(5).all()
+
+            data=[]
+
+            for r in result:
+
+                product = Product.query.get(r[0])
+
+                data.append({
+                    "producto":product.nombre,
+                    "cantidad":int(r[1])
+                })
+
+            return {"top_productos":data}
+
+        except Exception as e:
+            return {"error":str(e)}
         
     rol_usuario = "Administrador" if current_user.role == 'admin' else "Cliente"
     
@@ -192,7 +221,7 @@ def generate_chat_response():
         system_instruction=system_instruction,
         temperature=0.3,
         max_output_tokens=2048, # AUMENTADO para que no se corten los presupuestos largos
-        tools=[buscar_inventario, resumen_mis_compras, ventas_hoy, productos_bajo_stock]
+        tools=[buscar_inventario, resumen_mis_compras, ventas_hoy, productos_bajo_stock, productos_mas_vendidos]
     )
 
     try:
