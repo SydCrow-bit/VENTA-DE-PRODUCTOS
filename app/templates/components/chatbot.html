@@ -176,7 +176,9 @@
     });
 
     function formatText(text) {
-        return text.replace(/\*\*(.*?)\*\*/g, '<span class="markdown-bold">$1</span>')
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<span class="markdown-bold">$1</span>')
+            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors font-medium">$1</a>')
             .replace(/\n/g, '<br>');
     }
 
