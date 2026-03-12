@@ -314,3 +314,79 @@ def ai_stock():
             "status": "error",
             "message": str(e)
         }), 500
+# ==========================
+# INSIGHTS VENTAS
+# ==========================
+
+def obtener_datos_ventas():
+    total_ventas = db.session.query(func.sum(Venta.total)).scalar() or 0
+    num_ventas = Venta.query.count()
+    ticket = round(total_ventas / num_ventas, 2) if num_ventas > 0 else 0
+
+    top_productos = db.session.query(
+        Product.nombre,
+        func.sum(DetalleVenta.cantidad)
+    ).join(DetalleVenta).group_by(Product.id).order_by(
+        func.sum(DetalleVenta.cantidad).desc()
+    ).limit(5).all()
+
+    lista_top = [f"{p[0]} ({int(p[1])} ventas)" for p in top_productos] or ["Sin datos suficientes"]
+
+    return {
+        "total_ventas": round(total_ventas, 2),
+        "num_ventas": num_ventas,
+        "ticket_promedio": ticket,
+        "top_productos": lista_top
+    }
+
+
+def generar_insights_ventas(datos):
+    prompt = f"""
+Datos de ventas:
+Ingresos totales: {datos['total_ventas']} Bs
+Número de ventas: {datos['num_ventas']}
+Ticket promedio: {datos['ticket_promedio']}
+Top productos: {', '.join(datos['top_productos'])}
+
+Genera insights sobre ventas: tendencias, oportunidades de crecimiento, y estrategias recomendadas.
+Mínimo 4 párrafos, solo texto plano, sin markdown ni listas.
+"""
+
+    config = types.GenerateContentConfig(
+        temperature=0.7,
+        max_output_tokens=1500,
+        top_p=0.9
+    )
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt,
+        config=config
+    )
+
+    try:
+        texto = ""
+        for part in response.candidates[0].content.parts:
+            if hasattr(part, "text"):
+                texto += part.text
+        return limpiar_markdown(texto)
+    except:
+        return "Error generando insights de ventas"
+
+
+@ai_dashboard_bp.route("/sales")
+@login_required
+def ai_sales():
+    try:
+        datos = obtener_datos_ventas()
+        analysis = generar_insights_ventas(datos)
+        return jsonify({
+            "status": "success",
+            "analysis": analysis,
+            "generated": datetime.now().strftime("%H:%M")
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
